@@ -4,8 +4,9 @@
   --text:#f2f3f5;--sub:#9aa0a6;--muted:#5f6368;
   --green:#81c995;--red:#f28b82;--amber:#fdd663;--blue:#8ab4f8;
   --purple:#c58af9;--teal:#76d1ff;--orange:#ffad70;
-  --mono:'JetBrains Mono',monospace;--body:'Outfit',sans-serif;
+  --mono:'Roboto Mono',monospace;--body:'Roboto',sans-serif;
   --r8:8px;--r12:12px;--r16:16px;--r20:20px;--nav-h:58px;
+  --font-scale:1;
 }
 [data-theme="light"]{
   --bg:#f8f9fa;--s1:#ffffff;--s2:#f1f3f4;--s3:#e8eaed;--border:#dadce0;
@@ -323,3 +324,122 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15
     height: 36px;
   }
 }
+
+/* FONT SCALING OVERRIDES */
+body { font-size: calc(15px * var(--font-scale)) !important; }
+.nav-brand { font-size: calc(14px * var(--font-scale)) !important; }
+.ham-label { font-size: calc(9px * var(--font-scale)) !important; }
+.ham-item { font-size: calc(12px * var(--font-scale)) !important; }
+.nav-tab { font-size: calc(12px * var(--font-scale)) !important; }
+.nav-btn { font-size: calc(11px * var(--font-scale)) !important; }
+.btab { font-size: calc(9px * var(--font-scale)) !important; }
+.eyebrow { font-size: calc(10px * var(--font-scale)) !important; }
+.page-title { font-size: calc(clamp(20px, 4vw, 29px) * var(--font-scale)) !important; }
+.page-sub { font-size: calc(13px * var(--font-scale)) !important; }
+.sc-num { font-size: calc(18px * var(--font-scale)) !important; }
+.sc-lbl { font-size: calc(9px * var(--font-scale)) !important; }
+.xp-level-badge { font-size: calc(10px * var(--font-scale)) !important; }
+.xp-label-row { font-size: calc(10px * var(--font-scale)) !important; }
+.xp-total { font-size: calc(11px * var(--font-scale)) !important; }
+.wgm-label { font-size: calc(10px * var(--font-scale)) !important; }
+.wgm-nums { font-size: calc(13px * var(--font-scale)) !important; }
+.prog-row { font-size: calc(10px * var(--font-scale)) !important; }
+.prog-row span { font-size: calc(10px * var(--font-scale)) !important; }
+.banner { font-size: calc(12px * var(--font-scale)) !important; }
+.followup-banner { font-size: calc(12px * var(--font-scale)) !important; }
+.search-wrap input { font-size: calc(13px * var(--font-scale)) !important; }
+.sf-chip, .fpill { font-size: calc(10px * var(--font-scale)) !important; }
+.phase-title { font-size: calc(13px * var(--font-scale)) !important; }
+.phase-meta { font-size: calc(9px * var(--font-scale)) !important; }
+.done-pill { font-size: calc(9px * var(--font-scale)) !important; }
+.day-tag { font-size: calc(9px * var(--font-scale)) !important; }
+.day-label { font-size: calc(12.5px * var(--font-scale)) !important; }
+.day-count { font-size: calc(9px * var(--font-scale)) !important; }
+.task-text { font-size: calc(12px * var(--font-scale)) !important; }
+.task-badge { font-size: calc(8px * var(--font-scale)) !important; }
+.task-xp { font-size: calc(8px * var(--font-scale)) !important; }
+.conf-label { font-size: calc(8px * var(--font-scale)) !important; }
+.conf-star { font-size: calc(11px * var(--font-scale)) !important; }
+.bulk-btn { font-size: calc(9px * var(--font-scale)) !important; }
+.notes-label { font-size: calc(9px * var(--font-scale)) !important; }
+.notes-ta { font-size: calc(12px * var(--font-scale)) !important; }
+.notes-save { font-size: calc(9px * var(--font-scale)) !important; }
+.ai-brief-title { font-size: calc(10px * var(--font-scale)) !important; }
+.ai-btn { font-size: calc(9px * var(--font-scale)) !important; }
+.ai-brief-body { font-size: calc(12px * var(--font-scale)) !important; }
+.v4-btn-primary { font-size: calc(10px * var(--font-scale)) !important; }
+.v4-btn-secondary { font-size: calc(10px * var(--font-scale)) !important; }
+.v4-input { font-size: calc(13px * var(--font-scale)) !important; }
+.v4-select { font-size: calc(13px * var(--font-scale)) !important; }
+.v4-label { font-size: calc(10px * var(--font-scale)) !important; }
+.v4-section-title { font-size: calc(10px * var(--font-scale)) !important; }
+.k-col-hdr, .job-col-hdr { font-size: calc(12px * var(--font-scale)) !important; }
+.k-count { font-size: calc(9px * var(--font-scale)) !important; }
+.k-card-day { font-size: calc(9px * var(--font-scale)) !important; }
+.k-card-label { font-size: calc(11px * var(--font-scale)) !important; }
+.k-card-pct { font-size: calc(9px * var(--font-scale)) !important; }
+.k-empty { font-size: calc(12px * var(--font-scale)) !important; }
+.job-card-company { font-size: calc(12px * var(--font-scale)) !important; }
+.job-card-role { font-size: calc(11px * var(--font-scale)) !important; }
+.job-card-meta { font-size: calc(9px * var(--font-scale)) !important; }
+.job-action-btn { font-size: calc(8px * var(--font-scale)) !important; }
+.job-input { font-size: calc(12px * var(--font-scale)) !important; }
+.job-source-select { font-size: calc(12px * var(--font-scale)) !important; }
+.job-save-btn { font-size: calc(10px * var(--font-scale)) !important; }
+.focus-nav select { font-size: calc(12px * var(--font-scale)) !important; }
+.focus-btn { font-size: calc(10px * var(--font-scale)) !important; }
+.focus-day-tag { font-size: calc(10px * var(--font-scale)) !important; }
+.focus-title { font-size: calc(16px * var(--font-scale)) !important; }
+.focus-meta { font-size: calc(12px * var(--font-scale)) !important; }
+.focus-link { font-size: calc(10px * var(--font-scale)) !important; }
+.sr-item-text { font-size: calc(12px * var(--font-scale)) !important; }
+.sr-item-meta { font-size: calc(9px * var(--font-scale)) !important; }
+.sr-rate-btn { font-size: calc(9px * var(--font-scale)) !important; }
+.qb-chip { font-size: calc(10px * var(--font-scale)) !important; }
+.q-question { font-size: calc(12.5px * var(--font-scale)) !important; }
+.q-cat { font-size: calc(9px * var(--font-scale)) !important; }
+.q-answer-inner { font-size: calc(12px * var(--font-scale)) !important; }
+.stat-card-title { font-size: calc(9px * var(--font-scale)) !important; }
+.type-label { font-size: calc(10px * var(--font-scale)) !important; }
+.type-count { font-size: calc(9px * var(--font-scale)) !important; }
+.heat-day-lbl { font-size: calc(8px * var(--font-scale)) !important; }
+.lab-day-btn { font-size: calc(10px * var(--font-scale)) !important; }
+.report-week-label { font-size: calc(13px * var(--font-scale)) !important; }
+.report-stat-num { font-size: calc(20px * var(--font-scale)) !important; }
+.report-stat-lbl { font-size: calc(9px * var(--font-scale)) !important; }
+.report-section-title { font-size: calc(9px * var(--font-scale)) !important; }
+.day-bar-name { font-size: calc(9px * var(--font-scale)) !important; }
+.day-bar-count { font-size: calc(9px * var(--font-scale)) !important; }
+.report-export-btn { font-size: calc(10px * var(--font-scale)) !important; }
+.eta-band-title { font-size: calc(9px * var(--font-scale)) !important; }
+.modal-close { font-size: calc(14px * var(--font-scale)) !important; }
+.modal-title { font-size: calc(14px * var(--font-scale)) !important; }
+.pomo-mode-btn { font-size: calc(10px * var(--font-scale)) !important; }
+.pomo-time-num { font-size: calc(28px * var(--font-scale)) !important; }
+.pomo-time-lbl { font-size: calc(9px * var(--font-scale)) !important; }
+.pomo-ctrl-btn.reset { font-size: calc(14px * var(--font-scale)) !important; }
+.pomo-ctrl-btn.main { font-size: calc(17px * var(--font-scale)) !important; }
+.pomo-sessions { font-size: calc(10px * var(--font-scale)) !important; }
+.kbd-hint { font-size: calc(9px * var(--font-scale)) !important; }
+
+/* INLINE STYLE OVERRIDES */
+[style*="font-size: 8px"], [style*="font-size:8px"] { font-size: calc(8px * var(--font-scale)) !important; }
+[style*="font-size: 9px"], [style*="font-size:9px"] { font-size: calc(9px * var(--font-scale)) !important; }
+[style*="font-size: 10px"], [style*="font-size:10px"] { font-size: calc(10px * var(--font-scale)) !important; }
+[style*="font-size: 11px"], [style*="font-size:11px"] { font-size: calc(11px * var(--font-scale)) !important; }
+[style*="font-size: 12px"], [style*="font-size:12px"] { font-size: calc(12px * var(--font-scale)) !important; }
+[style*="font-size: 13px"], [style*="font-size:13px"] { font-size: calc(13px * var(--font-scale)) !important; }
+[style*="font-size: 14px"], [style*="font-size:14px"] { font-size: calc(14px * var(--font-scale)) !important; }
+[style*="font-size: 15px"], [style*="font-size:15px"] { font-size: calc(15px * var(--font-scale)) !important; }
+[style*="font-size: 16px"], [style*="font-size:16px"] { font-size: calc(16px * var(--font-scale)) !important; }
+[style*="font-size: 17px"], [style*="font-size:17px"] { font-size: calc(17px * var(--font-scale)) !important; }
+[style*="font-size: 18px"], [style*="font-size:18px"] { font-size: calc(18px * var(--font-scale)) !important; }
+[style*="font-size: 20px"], [style*="font-size:20px"] { font-size: calc(20px * var(--font-scale)) !important; }
+[style*="font-size: 22px"], [style*="font-size:22px"] { font-size: calc(22px * var(--font-scale)) !important; }
+[style*="font-size: 24px"], [style*="font-size:24px"] { font-size: calc(24px * var(--font-scale)) !important; }
+[style*="font-size: 28px"], [style*="font-size:28px"] { font-size: calc(28px * var(--font-scale)) !important; }
+[style*="font-size: 32px"], [style*="font-size:32px"] { font-size: calc(32px * var(--font-scale)) !important; }
+[style*="font-size: 36px"], [style*="font-size:36px"] { font-size: calc(36px * var(--font-scale)) !important; }
+[style*="font-size: 46px"], [style*="font-size:46px"] { font-size: calc(46px * var(--font-scale)) !important; }
+[style*="font-size: 52px"], [style*="font-size:52px"] { font-size: calc(52px * var(--font-scale)) !important; }
+
