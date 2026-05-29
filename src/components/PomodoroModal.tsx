@@ -65,6 +65,31 @@ export const PomodoroModal: React.FC<PomodoroModalProps> = ({
     } catch (_) {}
   };
 
+  const playCompletionSound = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      
+      const playTone = (freq: number, start: number, duration: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.2, start + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duration);
+      };
+
+      playTone(587.33, ctx.currentTime, 0.4);
+      playTone(880, ctx.currentTime + 0.15, 0.6);
+    } catch (_) {}
+  };
+
   useEffect(() => {
     if (isRunning) {
       timerRef.current = setInterval(() => {
@@ -73,6 +98,9 @@ export const PomodoroModal: React.FC<PomodoroModalProps> = ({
             setIsRunning(false);
             if (timerRef.current) clearInterval(timerRef.current);
             
+            // Play completion chime
+            playCompletionSound();
+
             // Finished session!
             if (mode === 'focus') {
               incrementSessions();

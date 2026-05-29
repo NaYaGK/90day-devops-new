@@ -3,7 +3,6 @@ import { Lab } from '../data/labs';
 import { showToast } from './Toast';
 
 interface TerminalSimulatorProps {
-  dk: string;
   lab: Lab;
   isLabDone: (exId: string) => boolean;
   markLabDone: (exId: string) => void;
@@ -19,7 +18,6 @@ interface TerminalLine {
 }
 
 export const TerminalSimulator: React.FC<TerminalSimulatorProps> = ({
-  dk,
   lab,
   isLabDone,
   markLabDone,

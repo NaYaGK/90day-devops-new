@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseAppStateReturnType, LEVELS } from '../hooks/useAppState';
+import { UseAppStateReturnType } from '../hooks/useAppState';
 import { PHASES } from '../data/phases';
 
 interface StatsViewProps {
@@ -84,7 +84,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ appState }) => {
               style={{
                 fontSize: '46px',
                 fontWeight: 800,
-                family: 'var(--mono)',
+                fontFamily: 'var(--mono)',
                 background: 'linear-gradient(135deg,var(--green),var(--blue))',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',

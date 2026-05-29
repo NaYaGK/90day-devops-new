@@ -24,6 +24,7 @@ import { PomodoroModal } from './components/PomodoroModal';
 import { showToast } from './components/Toast';
 import { getApiKey, saveApiKey } from './components/AIService';
 
+
 export const App: React.FC = () => {
   const appState = useAppState();
   const { state, incrementPomoSessions, studyHours } = appState;
@@ -37,6 +38,8 @@ export const App: React.FC = () => {
   const [isPomoOpen, setIsPomoOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
+
+
 
   const [hasNotificationPermission, setHasNotificationPermission] = useState(() => {
     return 'Notification' in window && Notification.permission === 'granted';
@@ -185,7 +188,6 @@ export const App: React.FC = () => {
         <div className="nav-brand" onClick={() => handleNavItemClick('roadmap')} style={{ cursor: 'pointer' }}>
           <span className="g">DEV</span>
           <span className="p">OPS</span>
-
         </div>
         <div className="nav-tabs">
           <button
@@ -218,7 +220,9 @@ export const App: React.FC = () => {
             {hasNotificationPermission ? '🔔' : '🔕'} <span className="nav-btn-text">Alerts</span>
           </button>
           <button className="nav-btn hi" onClick={() => setIsPomoOpen(true)} title="Pomodoro Timer">⏱</button>
-          <button className="nav-btn" onClick={toggleTheme} title="Toggle Theme">◑ <span className="nav-btn-text">Theme</span></button>
+          <button className="nav-btn" onClick={toggleTheme} title="Toggle Theme">
+            {theme === 'dark' ? '🌙' : '☀️'} <span className="nav-btn-text">Theme</span>
+          </button>
           <button className="nav-btn" onClick={handleOpenSettings} title="Settings Keys">🔑 <span className="nav-btn-text">Keys</span></button>
         </div>
       </nav>
@@ -239,6 +243,7 @@ export const App: React.FC = () => {
         role="dialog"
         aria-label="Navigation menu"
       >
+
         <div className="ham-section">
           <div className="ham-label">🔔 Alerts</div>
           <button className="ham-item" onClick={handleNotificationEnable} style={{ cursor: 'pointer' }}>
@@ -426,6 +431,7 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

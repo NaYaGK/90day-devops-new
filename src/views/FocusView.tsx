@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PHASES, Phase, DayData } from '../data/phases';
+import { PHASES } from '../data/phases';
 import { UseAppStateReturnType } from '../hooks/useAppState';
 import { AIService } from '../components/AIService';
 import { showToast } from '../components/Toast';
@@ -24,7 +24,6 @@ export const FocusView: React.FC<FocusViewProps> = ({
     dayPct,
     getNote,
     setNote,
-    hasNote,
     getConf,
     setConf,
     toggleTask,

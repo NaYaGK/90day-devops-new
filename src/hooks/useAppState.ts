@@ -1,7 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { PHASES } from '../data/phases';
-import { PROJECTS } from '../data/projects';
-import { QBANK } from '../data/qbank';
 import { LABS } from '../data/labs';
 
 // Interfaces
@@ -637,10 +635,11 @@ export function useAppState() {
   };
 
   // Smart Next task
-  const getSmartNext = useCallback(() => {
+  const getSmartNext = useCallback((): { pi: number; di: number; d: any; ph: any } | null => {
     let weakestPi = 0;
     let weakestPct = 100;
-    PHASES.forEach((ph, pi) => {
+    for (let pi = 0; pi < PHASES.length; pi++) {
+      const ph = PHASES[pi];
       const tot = ph.data.reduce((a, _d, di) => a + dayTotal(pi, di), 0);
       const don = ph.data.reduce((a, _d, di) => a + dayDone(pi, di), 0);
       const pct = tot ? (don / tot) * 100 : 100;
@@ -648,30 +647,27 @@ export function useAppState() {
         weakestPct = pct;
         weakestPi = pi;
       }
-    });
-
-    let result: { pi: number; di: number; d: typeof PHASES[0]['data'][0]; ph: typeof PHASES[0] } | null = null;
-    PHASES[weakestPi].data.forEach((d, di) => {
-      if (result) return;
-      if (dayDone(weakestPi, di) < dayTotal(weakestPi, di)) {
-        result = { pi: weakestPi, di, d, ph: PHASES[weakestPi] };
-      }
-    });
-
-    if (!result) {
-      PHASES.forEach((ph, pi) => {
-        if (result) return;
-        ph.data.forEach((d, di) => {
-          if (result) return;
-          if (dayDone(pi, di) < dayTotal(pi, di)) {
-            result = { pi, di, d, ph };
-          }
-        });
-      });
     }
 
-    return result;
+    const weakestPhase = PHASES[weakestPi];
+    for (let di = 0; di < weakestPhase.data.length; di++) {
+      if (dayDone(weakestPi, di) < dayTotal(weakestPi, di)) {
+        return { pi: weakestPi, di, d: weakestPhase.data[di], ph: weakestPhase };
+      }
+    }
+
+    for (let pi = 0; pi < PHASES.length; pi++) {
+      const ph = PHASES[pi];
+      for (let di = 0; di < ph.data.length; di++) {
+        if (dayDone(pi, di) < dayTotal(pi, di)) {
+          return { pi, di, d: ph.data[di], ph };
+        }
+      }
+    }
+
+    return null;
   }, [dayDone, dayTotal]);
+
 
   const checkPhaseJustCompleted = (pi: number) => {
     const ph = PHASES[pi];

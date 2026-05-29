@@ -20,7 +20,7 @@ export const KanbanView: React.FC<KanbanViewProps> = ({
   switchView,
   setFocusDay,
 }) => {
-  const { dayStatus, dayDone, dayTotal, isPhaseOpen } = appState;
+  const { dayStatus, dayDone, dayTotal } = appState;
   const [kbPhase, setKbPhase] = useState<string>('all');
 
   const cols: Record<'backlog' | 'inprogress' | 'review' | 'done', KanbanItem[]> = {

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Roadmap Architecture Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0f12;
+      --s1: #16181d;
+      --s2: #1e222b;
+      --s3: #2a2f3d;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f2f5fa;
+      --sub: #9ea8b6;
+      --muted: #57606e;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Phase Colors */
+      --p1: #00d9a0; --p1-dim: rgba(0, 217, 160, 0.15);
+      --p2: #ff6060; --p2-dim: rgba(255, 96, 96, 0.15);
+      --p3: #4fa8ff; --p3-dim: rgba(79, 168, 255, 0.15);
+      --p4: #ffc850; --p4-dim: rgba(255, 200, 80, 0.15);
+      --p5: #c084fc; --p5-dim: rgba(192, 132, 252, 0.15);
+      --p6: #38bdf8; --p6-dim: rgba(56, 189, 248, 0.15);
+      --p7: #f97316; --p7-dim: rgba(249, 115, 22, 0.15);
+      --p8: #a78bfa; --p8-dim: rgba(167, 139, 250, 0.15);
+      --p9: #34d399; --p9-dim: rgba(52, 211, 153, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--p1);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 30%, var(--sub) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .desc {
+      color: var(--sub);
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Flowchart Grid */
+    .flowchart {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      position: relative;
+      margin-bottom: 50px;
+    }
+
+    @media (max-width: 900px) {
+      .flowchart {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .flowchart {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Node Card styles */
+    .node {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .node::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--color);
+      transition: width 0.2s ease;
+    }
+
+    .node:hover {
+      transform: translateY(-5px);
+      border-color: var(--color);
+      box-shadow: 0 8px 30px var(--dim);
+    }
+
+    .node.active {
+      border-color: var(--color);
+      box-shadow: 0 0 25px var(--dim);
+      background: var(--s2);
+    }
+
+    .node.active::before {
+      width: 8px;
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .node-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color);
+      font-weight: 700;
+      background: var(--dim);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .node-days {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--sub);
+    }
+
+    .node-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .node-icon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .node-icon {
+      font-size: 18px;
+    }
+
+    .node-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .skill-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--sub);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    /* Detail Section */
+    .detail-section {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      min-height: 250px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .detail-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 180px;
+      color: var(--muted);
+      text-align: center;
+      gap: 12px;
+    }
+
+    .detail-placeholder span {
+      font-size: 40px;
+    }
+
+    .detail-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .detail-content.active {
+      display: block;
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .detail-subtitle {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .detail-title {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .detail-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--bg);
+      background: var(--color);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .topics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .topic-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .topic-day {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color);
+      background: var(--dim);
+      height: fit-content;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .topic-desc {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .topic-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .topic-sub {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+
+    /* Back Link */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--sub);
+      text-decoration: none;
+      margin-top: 30px;
+      background: rgba(255,255,255,0.03);
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: rgba(255,255,255,0.06);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">90 Days of DevOps</div>
+      <h1>Roadmap Architecture Flow</h1>
+      <p class="desc">Explore the logical flow and architectural stages of the DevOps roadmap. Click any phase to deep dive into the days and core concepts covered.</p>
+    </header>
+
+    <!-- Interactive 9-Phase Flowchart -->
+    <div class="flowchart">
+      <!-- Phase 1 -->
+      <div class="node" style="--color: var(--p1); --dim: var(--p1-dim);" onclick="selectPhase(1)">
+        <div class="node-header">
+          <span class="node-num">PHASE 1</span>
+          <span class="node-days">Days 1–7</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">⬡</span>
+          <div class="node-title">Foundations & Culture</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">CALMS</span>
+          <span class="skill-tag">DORA</span>
+          <span class="skill-tag">Linux</span>
+          <span class="skill-tag">Ansible</span>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="node" style="--color: var(--p2); --dim: var(--p2-dim);" onclick="selectPhase(2)">
+        <div class="node-header">
+          <span class="node-num">PHASE 2</span>
+          <span class="node-days">Days 8–14</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">🔒</span>
+          <div class="node-title">Security & DevSecOps</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">STRIDE</span>
+          <span class="skill-tag">Trivy</span>
+          <span class="skill-tag">SLOs</span>
+          <span class="skill-tag">Prometheus</span>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="node" style="--color: var(--p3); --dim: var(--p3-dim);" onclick="selectPhase(3)">
+        <div class="node-header">
+          <span class="node-num">PHASE 3</span>
+          <span class="node-days">Days 15–20</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">✓</span>
+          <div class="node-title">Testing & QA</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">Pact</span>
+          <span class="skill-tag">Chaos Eng</span>
+          <span class="skill-tag">IDPs</span>
+          <span class="skill-tag">Docker Multi-Stage</span>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="node" style="--color: var(--p4); --dim: var(--p4-dim);" onclick="selectPhase(4)">
+        <div class="node-header">
+          <span class="node-num">PHASE 4</span>
+          <span class="node-days">Days 21–30</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">⬛</span>
+          <div class="node-title">Infrastructure as Code</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">OpenTofu</span>
+          <span class="skill-tag">Bicep</span>
+          <span class="skill-tag">Telepresence</span>
+          <span class="skill-tag">OpenTelemetry</span>
+        </div>
+      </div>
+
+      <!-- Phase 5 -->
+      <div class="node" style="--color: var(--p5); --dim: var(--p5-dim);" onclick="selectPhase(5)">
+        <div class="node-header">
+          <span class="node-num">PHASE 5</span>
+          <span class="node-days">Days 31–40</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">⑂</span>
+          <div class="node-title">GitOps & Pipelines</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">ArgoCD</span>
+          <span class="skill-tag">Flux</span>
+          <span class="skill-tag">OPA</span>
+          <span class="skill-tag">cert-manager</span>
+        </div>
+      </div>
+
+      <!-- Phase 6 -->
+      <div class="node" style="--color: var(--p6); --dim: var(--p6-dim);" onclick="selectPhase(6)">
+        <div class="node-header">
+          <span class="node-num">PHASE 6</span>
+          <span class="node-days">Days 41–50</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">☸</span>
+          <div class="node-title">Advanced Kubernetes</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">Ambient Mesh</span>
+          <span class="skill-tag">Firecracker</span>
+          <span class="skill-tag">AWS SSM</span>
+          <span class="skill-tag">BDD</span>
+        </div>
+      </div>
+
+      <!-- Phase 7 -->
+      <div class="node" style="--color: var(--p7); --dim: var(--p7-dim);" onclick="selectPhase(7)">
+        <div class="node-header">
+          <span class="node-num">PHASE 7</span>
+          <span class="node-days">Days 51–65</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">☁</span>
+          <div class="node-title">Modernization</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">Dev Containers</span>
+          <span class="skill-tag">OpenSearch</span>
+          <span class="skill-tag">Flyway</span>
+          <span class="skill-tag">Terratest</span>
+        </div>
+      </div>
+
+      <!-- Phase 8 -->
+      <div class="node" style="--color: var(--p8); --dim: var(--p8-dim);" onclick="selectPhase(8)">
+        <div class="node-header">
+          <span class="node-num">PHASE 8</span>
+          <span class="node-days">Days 66–80</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">⬡</span>
+          <div class="node-title">Connectivity & Net</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">Cilium eBPF</span>
+          <span class="skill-tag">Kiali</span>
+          <span class="skill-tag">Landing Zones</span>
+          <span class="skill-tag">Botkube</span>
+        </div>
+      </div>
+
+      <!-- Phase 9 -->
+      <div class="node" style="--color: var(--p9); --dim: var(--p9-dim);" onclick="selectPhase(9)">
+        <div class="node-header">
+          <span class="node-num">PHASE 9</span>
+          <span class="node-days">Days 81–90</span>
+        </div>
+        <div class="node-icon-wrap">
+          <span class="node-icon">⚡</span>
+          <div class="node-title">Optimization & AI</div>
+        </div>
+        <div class="node-skills">
+          <span class="skill-tag">FinOps</span>
+          <span class="skill-tag">k6</span>
+          <span class="skill-tag">Skaffold</span>
+          <span class="skill-tag">Generative AI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase Details Panel -->
+    <div class="detail-section" id="detail-section">
+      <div class="detail-placeholder" id="placeholder">
+        <span>🧭</span>
+        <h3>Select a Phase to view detailed flow and concepts</h3>
+      </div>
+
+      <!-- Phase Details content boxes will be populated dynamically -->
+      <div class="detail-content" id="detail-content">
+        <div class="detail-header">
+          <div>
+            <div class="detail-subtitle" id="detail-phase-num">PHASE 1</div>
+            <h2 class="detail-title" id="detail-phase-title">Foundations & Culture</h2>
+          </div>
+          <span class="detail-badge" id="detail-phase-days">Days 1–7</span>
+        </div>
+        <div class="topics-grid" id="topics-grid">
+          <!-- Dynamic topic cards -->
+        </div>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-btn">
+      ← Return to Main Dashboard
+    </a>
+  </div>
+
+  <script>
+    // Detailed program structure to match phases.ts
+    const PHASE_DETAILS = {
+      1: {
+        num: "PHASE 1",
+        title: "Foundations & Culture",
+        days: "Days 1–7",
+        color: "var(--p1)",
+        dim: "var(--p1-dim)",
+        topics: [
+          { day: "Day 1", title: "Community Edition & Goals", desc: "Setting up learning targets, understanding course layout, and creating a tracking repo." },
+          { day: "Day 2", title: "The Digital Factory", desc: "Software delivery lines, Lean principles, Value Stream Mapping, and the Three Ways of DevOps." },
+          { day: "Day 3", title: "Engineering Performance", desc: "Understanding the four DORA metrics and how to foster blameless culture and psychological safety." },
+          { day: "Day 4", title: "K8s Multi-Cluster Add-ons", desc: "Managing storage, networking, ingress, and GitOps workflows at scale." },
+          { day: "Day 5", title: "Cross-Functional Empathy", desc: "Breaking down organizational silos, empathy mapping, and shared responsibilities." },
+          { day: "Day 6", title: "K8s RBAC with Ansible", desc: "Automating cluster permissions, ServiceAccounts, and write role playbooks." },
+          { day: "Day 7", title: "Test Automation Realities", desc: "The testing pyramid, shift-left methodologies, and avoiding flaky tests." }
+        ]
+      },
+      2: {
+        num: "PHASE 2",
+        title: "Security & DevSecOps",
+        days: "Days 8–14",
+        color: "var(--p2)",
+        dim: "var(--p2-dim)",
+        topics: [
+          { day: "Day 8", title: "Culinary Coding with OpenTofu", desc: "Declarative IaC basics, modules, state tracking, and local container execution." },
+          { day: "Day 9", title: "Container Security Basics", desc: "Image scanning using Trivy/Grype, vulnerability remediation, and non-root runtime permissions." },
+          { day: "Day 10", title: "Kubernetes Complexity", desc: "Deconstructing control/data planes, etcd cluster, and managed K8s vs self-managed." },
+          { day: "Day 11", title: "STRIDE Threat Modeling", desc: "Mapping threats across application structures and applying zero-trust verification." },
+          { day: "Day 12", title: "Alert Stats & Fatigue", desc: "Setting prometheus monitoring, defining error budgets, and distinguishing SLIs/SLOs/SLAs." },
+          { day: "Day 13", title: "Architecting for Versatility", desc: "Leveraging 12-factor apps, service meshes, and multi-cloud strategies." },
+          { day: "Day 14", title: "K8s API Server Security", desc: "Enforcing mTLS, cert-manager deployments, and API admission webhooks." }
+        ]
+      },
+      3: {
+        num: "PHASE 3",
+        title: "Testing & QA",
+        days: "Days 15–20",
+        color: "var(--p3)",
+        dim: "var(--p3-dim)",
+        topics: [
+          { day: "Day 15", title: "Test Selection Analysis", desc: "Using dependency mapping to execute tests affected only by recent code changes." },
+          { day: "Day 16", title: "Scale and Parallel Testing", desc: "Designing parallel jobs in CI, test fixture management, and contract testing (Pact)." },
+          { day: "Day 17", title: "Chaos & Production Readiness", desc: "GameDays, fault injection, and executing experiments on local cluster with Litmus." },
+          { day: "Day 18", title: "Platform Engineering Core", desc: "Creating developer portals (Backstage), building golden paths, and service cataloging." },
+          { day: "Day 19", title: "Efficient Docker Multi-Stage", desc: "Distroless base images, Layer caching optimization, and secure Dockerfile builds." },
+          { day: "Day 20", title: "DevOps Learning Strategies", desc: "CNCF Landscape navigation, active retrieval practices, and learning retro logs." }
+        ]
+      },
+      4: {
+        num: "PHASE 4",
+        title: "Infrastructure as Code (IaC)",
+        days: "Days 21–30",
+        color: "var(--p4)",
+        dim: "var(--p4-dim)",
+        topics: [
+          { day: "Day 21", title: "Azure Bicep Integration", desc: "Deploying resources via Bicep templates, module exports, and transpilation checks." },
+          { day: "Day 22", title: "Telepresence Cluster Intercept", desc: "Intercepting remote cluster traffic locally, canary gates, and testing in production." },
+          { day: "Day 23", title: "Stateful K8s Workloads", desc: "PersistentVolumes, StatefulSet ordering, and orchestrating database servers." },
+          { day: "Day 24", title: "Pipeline Scanning Trio", desc: "SAST, DAST, and SCA pipeline automation to shift security left into build jobs." },
+          { day: "Day 25", title: "Kube-Nation Objects", desc: "Deep diving into core objects like Services, ConfigMaps, Secrets, and LimitRanges." },
+          { day: "Day 26", title: "Jenkins & API Mocking", desc: "Building declarative pipelines, WireMock configurations, and code coverage checks." },
+          { day: "Day 27", title: "Event-Driven Ansible", desc: "Creating reactive rulebooks that trigger playbooks from webhooks and alert streams." },
+          { day: "Day 28", title: "Talos Immutable Linux", desc: "Running API-driven, shell-less, immutable OS nodes optimized for Kubernetes security." },
+          { day: "Day 29", title: "OpenTelemetry Tracing", desc: "Instrumenting spans, trace propagation, OTLP collector, and Jaeger analysis." },
+          { day: "Day 30", title: "ChatOps Workflows", desc: "Triggering deployments from Slack/Teams and exploring GitHub's internal workflows." }
+        ]
+      },
+      5: {
+        num: "PHASE 5",
+        title: "GitOps & Pipelines",
+        days: "Days 31–40",
+        color: "var(--p5)",
+        dim: "var(--p5-dim)",
+        topics: [
+          { day: "Day 31", title: "GitOps on AKS with Flux", desc: "Declarative cluster reconciliation, git synchronization, and drift protection." },
+          { day: "Day 32", title: "Outage Incident Analysis", desc: "Historical incident modeling, 5 Whys framework, and drafting blameless retro logs." },
+          { day: "Day 33", title: "ArgoCD & GHA Integrations", desc: "Sync policies, app-of-apps patterns, and pipeline image update scripts." },
+          { day: "Day 34", title: "Deployment Promotion Gates", desc: "Environment promotion strategies, approval gates, and multi-stage YAML pipelines." },
+          { day: "Day 35", title: "Azure Security Governance", desc: "Microsoft Defender for cloud, CSPM tools, and pipeline security tokens." },
+          { day: "Day 36", title: "OPA Gatekeeper Policies", desc: "Writing Rego scripts to block unsafe configs, Conftest checks, and policy as code." },
+          { day: "Day 37", title: "Advanced GitOps & Secrets", desc: "Multi-tenant setups, sealed secrets, and external secrets store operators." },
+          { day: "Day 38", title: "CNCF Standards", desc: "Understanding specifications like OCI, CNI, CSI, and CRI extension interfaces." },
+          { day: "Day 39", title: "TLS chain & cert-manager", desc: "Deploying cert-manager, ACME validation protocols, and automatic SSL issuing." },
+          { day: "Day 40", title: "Terraform vs Bicep State", desc: "Remote state locking, module composition, and resolving state drift." }
+        ]
+      },
+      6: {
+        num: "PHASE 6",
+        title: "Advanced Kubernetes",
+        days: "Days 41–50",
+        color: "var(--p6)",
+        dim: "var(--p6-dim)",
+        topics: [
+          { day: "Day 41", title: "FinOps & Platform Engineering", desc: "Predictive scaling, operations budget limits, and cloud cost accounting." },
+          { day: "Day 42", title: "Risk-driven security & SBOM", desc: "Generating Software Bill of Materials (SBOM) with Syft to secure supply chain." },
+          { day: "Day 43", title: "Sidecarless Ambient Mesh", desc: "Istio ambient mode, L4 ztunnel security, and waypoint routing protocols." },
+          { day: "Day 44", title: "Firecracker microVMs", desc: "Comparing VM security with container performance, running lightweight microVM configs." },
+          { day: "Day 45", title: "Azure DevOps vs GitHub", desc: "Feature comparison, pipeline migration tools, and GitHub Advanced Security." },
+          { day: "Day 46", title: "AWS Systems Manager (SSM)", desc: "Shell access without open SSH ports, Patch Manager, and secure Parameter Store." },
+          { day: "Day 47", title: "Azure Logic Apps", desc: "No-code event-driven integration flows, triggers, and custom connectors." },
+          { day: "Day 48", title: "Generative AI in DevOps", desc: "Hallucination mitigation, prompt design for yaml generation, and static code reviews." },
+          { day: "Day 49", title: "BDD Testing with Gherkin", desc: "Bridge business requirements and automated tests using Cucumber/SpecFlow scenarios." },
+          { day: "Day 50", title: "Cloud Native 2024", desc: "Serverless WebAssembly (Wasm), maturity models, and CNCF ecosystem trends." }
+        ]
+      },
+      7: {
+        num: "PHASE 7",
+        title: "Modernization & Cloud-Native",
+        days: "Days 51–65",
+        color: "var(--p7)",
+        dim: "var(--p7-dim)",
+        topics: [
+          { day: "Day 51", title: "DevOps on Windows (WSL2)", desc: "Setting up shell toolchains, running Linux containers, and PowerShell DSC." },
+          { day: "Day 52", title: "Dev Containers & Codespaces", desc: "Reproducible editor environments using devcontainer.json configuration profiles." },
+          { day: "Day 53", title: "Git Repository Backups", desc: "Automating replication across providers using Gickup backup definitions." },
+          { day: "Day 54", title: "AWS OpenSearch IaC", desc: "Provisioning search indexing domains and cost optimization with UltraWarm nodes." },
+          { day: "Day 55", title: "Terraform Ansible Synergy", desc: "Combining IaC provisioning with Ansible configurations using official providers." },
+          { day: "Day 56", title: "Database DevOps Pipeline", desc: "Liquibase/Flyway migrations and expand/contract patterns for zero downtime." },
+          { day: "Day 57", title: "Infrastructure TDD (Terratest)", desc: "Writing Go tests to assert infrastructure provisioning success before deployment." }
+        ]
+      },
+      8: {
+        num: "PHASE 8",
+        title: "Connectivity & Networking",
+        days: "Days 66–80",
+        color: "var(--p8)",
+        dim: "var(--p8-dim)",
+        topics: [
+          { day: "Day 68", title: "K8s Service Mesh Envoy", desc: "Observability dashboards with Kiali, mutual TLS configuration, and traffic splits." },
+          { day: "Day 69", title: "eBPF Cilium Networking", desc: "Deploying high-performance container network namespaces and Hubble tracing." },
+          { day: "Day 70", title: "Azure Landing Zones IaC", desc: "Deploying governance-ready landing zones with management groups and policies." },
+          { day: "Day 80", title: "Botkube K8s ChatOps", desc: "Receiving real-time Kubernetes event alerts and running diagnostic commands via Slack." }
+        ]
+      },
+      9: {
+        num: "PHASE 9",
+        title: "Optimization & AI",
+        days: "Days 81–90",
+        color: "var(--p9)",
+        dim: "var(--p9-dim)",
+        topics: [
+          { day: "Day 81", title: "Skaffold Inner Loop", desc: "Enabling hot-reload development workflows directly targeting local K8s nodes." },
+          { day: "Day 83", title: "FinOps Prometheus Costs", desc: "Deploying OpenCost/Kubecost and right-sizing workloads with Goldilocks." },
+          { day: "Day 84", title: "Hacking K8s Penetration", desc: "Auditing configurations with kube-bench, container escapes, and runtime Falco logs." },
+          { day: "Day 87", title: "Performance Testing k6", desc: "Creating javascript stress and spike load scripts, outputting to Grafana graphs." },
+          { day: "Day 89", title: "Generative AI IaC Validation", desc: "Static security audits of AI-generated terraform modules using tflint and checkov." }
+        ]
+      }
+    };
+
+    function selectPhase(phaseId) {
+      // Deactivate all nodes
+      document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+      
+      // Activate clicked node
+      const clickedNode = document.querySelector(`.node:nth-child(${phaseId})`);
+      if (clickedNode) clickedNode.classList.add('active');
+
+      const data = PHASE_DETAILS[phaseId];
+      if (!data) return;
+
+      // Update Details Section
+      document.getElementById('placeholder').style.display = 'none';
+      const content = document.getElementById('detail-content');
+      content.classList.add('active');
+
+      document.getElementById('detail-phase-num').textContent = data.num;
+      document.getElementById('detail-phase-title').textContent = data.title;
+      document.getElementById('detail-phase-days').textContent = data.days;
+      
+      const section = document.getElementById('detail-section');
+      section.style.borderColor = data.color;
+      section.style.boxShadow = `0 10px 40px ${data.dim}`;
+      
+      const badge = document.getElementById('detail-phase-days');
+      badge.style.backgroundColor = data.color;
+
+      const grid = document.getElementById('topics-grid');
+      grid.innerHTML = '';
+
+      data.topics.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'topic-card';
+        card.innerHTML = `
+          <span class="topic-day" style="--color: ${data.color}; --dim: ${data.dim}">${t.day}</span>
+          <div class="topic-desc">
+            <h4 class="topic-title">${t.title}</h4>
+            <p class="topic-sub">${t.desc}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Scroll detail section into view smoothly
+      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+</body>
+</html>

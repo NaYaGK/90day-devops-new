@@ -17,10 +17,7 @@ export const LabsView: React.FC<LabsViewProps> = ({ appState }) => {
   const total = activeLab ? activeLab.exercises.length : 0;
   const pct = total ? Math.round((done / total) * 100) : 0;
 
-  const formatTime = (secs: number) => {
-    if (secs < 60) return secs + 's';
-    return Math.floor(secs / 60) + 'm ' + (secs % 60) + 's';
-  };
+
 
   return (
     <div className="wrap">
@@ -96,7 +93,7 @@ export const LabsView: React.FC<LabsViewProps> = ({ appState }) => {
                     href={activeLab.killercoda}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--amber)', decoration: 'none', padding: '5px 11px', border: '1px solid rgba(255,200,80,.3)', borderRadius: 'var(--r8)', background: 'rgba(255,200,80,.06)', textDecoration: 'none' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--amber)', padding: '5px 11px', border: '1px solid rgba(255,200,80,.3)', borderRadius: 'var(--r8)', background: 'rgba(255,200,80,.06)', textDecoration: 'none' }}
                   >
                     默默 Open KillerCoda Lab →
                   </a>
@@ -106,7 +103,7 @@ export const LabsView: React.FC<LabsViewProps> = ({ appState }) => {
                     href={activeLab.playdocker}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--blue)', decoration: 'none', padding: '5px 11px', border: '1px solid rgba(79,168,255,.3)', borderRadius: 'var(--r8)', background: 'rgba(79,168,255,.06)', textDecoration: 'none' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--blue)', padding: '5px 11px', border: '1px solid rgba(79,168,255,.3)', borderRadius: 'var(--r8)', background: 'rgba(79,168,255,.06)', textDecoration: 'none' }}
                   >
                     🐳 Play With Docker →
                   </a>
@@ -118,7 +115,6 @@ export const LabsView: React.FC<LabsViewProps> = ({ appState }) => {
           {/* Terminal (for terminal-type labs) */}
           {activeLab.type === 'terminal' && (
             <TerminalSimulator
-              dk={activeDk}
               lab={activeLab}
               isLabDone={(exId) => isLabDone(activeDk, exId)}
               markLabDone={(exId) => markLabDone(activeDk, exId)}
@@ -135,7 +131,6 @@ export const LabsView: React.FC<LabsViewProps> = ({ appState }) => {
                 ex={ex}
                 idx={idx}
                 isDone={isExDone}
-                formatTime={formatTime}
               />
             );
           })}
@@ -149,10 +144,9 @@ interface ExerciseCardProps {
   ex: Exercise;
   idx: number;
   isDone: boolean;
-  formatTime: (secs: number) => string;
 }
 
-const ExerciseCard: React.FC<ExerciseCardProps> = ({ ex, idx, isDone, formatTime }) => {
+const ExerciseCard: React.FC<ExerciseCardProps> = ({ ex, idx, isDone }) => {
   const [showHint, setShowHint] = useState(false);
 
   return (

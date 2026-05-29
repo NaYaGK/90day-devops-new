@@ -36,7 +36,7 @@ export const MockInterviewView: React.FC<MockInterviewViewProps> = ({ appState, 
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any | null>(null);
 
   // Clean up timer on unmount
   useEffect(() => {
