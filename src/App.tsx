@@ -21,7 +21,8 @@ import { ReadinessView } from './views/ReadinessView';
 import { ReviewsView } from './views/ReviewsView';
 import { SitecoreCMSView } from './views/SitecoreCMSView';
 import { PomodoroModal } from './components/PomodoroModal';
-import { ANTHROPIC_KEY_STORAGE, getApiKey, saveApiKey } from './components/AIService';
+import { showToast } from './components/Toast';
+import { getApiKey, saveApiKey } from './components/AIService';
 
 export const App: React.FC = () => {
   const appState = useAppState();
@@ -30,12 +31,35 @@ export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<string>('roadmap');
   const [focusDay, setFocusDay] = useState<string>('0_0');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  
+
   // Modals visibility
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isPomoOpen, setIsPomoOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
+
+  const [hasNotificationPermission, setHasNotificationPermission] = useState(() => {
+    return 'Notification' in window && Notification.permission === 'granted';
+  });
+
+  const handleNotificationEnable = () => {
+    if ('Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(p => {
+          setHasNotificationPermission(p === 'granted');
+          if (p === 'granted') {
+            showToast('✓ Notifications enabled! You\'ll be reminded when reviews are due.', 'rgba(0,217,160,.1)');
+          }
+        });
+      } else if (Notification.permission === 'denied') {
+        showToast('⚠ Notifications are blocked. Please enable them in browser settings.', 'var(--red)');
+      } else {
+        showToast('✓ Notifications are already enabled!', 'rgba(0,217,160,.1)');
+      }
+    } else {
+      showToast('⚠ Notifications are not supported in this browser.', 'var(--red)');
+    }
+  };
 
   // Handle Theme Initialisation
   useEffect(() => {
@@ -138,8 +162,6 @@ export const App: React.FC = () => {
     }
   };
 
-  const primaryViews = ['roadmap', 'kanban', 'focus', 'labs'];
-
   const handleNavItemClick = (view: string) => {
     setCurrentView(view);
     setIsDrawerOpen(false);
@@ -163,7 +185,7 @@ export const App: React.FC = () => {
         <div className="nav-brand" onClick={() => handleNavItemClick('roadmap')} style={{ cursor: 'pointer' }}>
           <span className="g">DEV</span>
           <span className="p">OPS</span>
-          <span className="v">v4</span>
+
         </div>
         <div className="nav-tabs">
           <button
@@ -192,28 +214,38 @@ export const App: React.FC = () => {
           </button>
         </div>
         <div className="nav-right">
-          <button className="nav-btn hi" onClick={() => setIsPomoOpen(true)}>⏱</button>
-          <button className="nav-btn" onClick={toggleTheme}>◑ Theme</button>
-          <button className="nav-btn" onClick={handleOpenSettings}>🔑 Keys</button>
+          <button className={`nav-btn ${hasNotificationPermission ? 'hi' : ''}`} onClick={handleNotificationEnable} title="Enable Review Notifications">
+            {hasNotificationPermission ? '🔔' : '🔕'} <span className="nav-btn-text">Alerts</span>
+          </button>
+          <button className="nav-btn hi" onClick={() => setIsPomoOpen(true)} title="Pomodoro Timer">⏱</button>
+          <button className="nav-btn" onClick={toggleTheme} title="Toggle Theme">◑ <span className="nav-btn-text">Theme</span></button>
+          <button className="nav-btn" onClick={handleOpenSettings} title="Settings Keys">🔑 <span className="nav-btn-text">Keys</span></button>
         </div>
       </nav>
 
       {/* Side Hamburger Drawer Backdrop */}
       {isDrawerOpen && (
-        <div 
-          id="ham-overlay" 
+        <div
+          id="ham-overlay"
           className="open"
           onClick={() => setIsDrawerOpen(false)}
         ></div>
       )}
 
       {/* Side Hamburger Drawer */}
-      <div 
-        id="ham-drawer" 
+      <div
+        id="ham-drawer"
         className={isDrawerOpen ? 'open' : ''}
-        role="dialog" 
+        role="dialog"
         aria-label="Navigation menu"
       >
+        <div className="ham-section">
+          <div className="ham-label">🔔 Alerts</div>
+          <button className="ham-item" onClick={handleNotificationEnable} style={{ cursor: 'pointer' }}>
+            <span className="ham-ico">{hasNotificationPermission ? '🔔' : '🔕'}</span>
+            {hasNotificationPermission ? 'Notifications Enabled' : 'Enable Notifications'}
+          </button>
+        </div>
         <div className="ham-section">
           <div className="ham-label">🏗️ CMS Builder</div>
           <button className={`ham-item ${currentView === 'sitecore' ? 'active' : ''}`} onClick={() => handleNavItemClick('sitecore')}>
@@ -292,32 +324,32 @@ export const App: React.FC = () => {
 
       {/* Mobile Bottom Navigation Bar */}
       <div id="bottom-bar">
-        <button 
-          className={`btab ${currentView === 'roadmap' ? 'active' : ''}`} 
+        <button
+          className={`btab ${currentView === 'roadmap' ? 'active' : ''}`}
           onClick={() => handleNavItemClick('roadmap')}
         >
           <span className="bico">☑</span>Map
         </button>
-        <button 
-          className={`btab ${currentView === 'kanban' ? 'active' : ''}`} 
+        <button
+          className={`btab ${currentView === 'kanban' ? 'active' : ''}`}
           onClick={() => handleNavItemClick('kanban')}
         >
           <span className="bico">⊞</span>Kanban
         </button>
-        <button 
-          className={`btab ${currentView === 'focus' ? 'active' : ''}`} 
+        <button
+          className={`btab ${currentView === 'focus' ? 'active' : ''}`}
           onClick={() => handleNavItemClick('focus')}
         >
           <span className="bico">◎</span>Focus
         </button>
-        <button 
-          className={`btab ${currentView === 'labs' ? 'active' : ''}`} 
+        <button
+          className={`btab ${currentView === 'labs' ? 'active' : ''}`}
           onClick={() => handleNavItemClick('labs')}
         >
           <span className="bico">⌨</span>Labs
         </button>
-        <button 
-          className="btab" 
+        <button
+          className="btab"
           onClick={() => setIsDrawerOpen(!isDrawerOpen)}
         >
           <span className="bico">☰</span>More

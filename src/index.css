@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15
 .btab{background:none;border:none;cursor:pointer;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 4px;border-radius:var(--r8);min-width:36px;transition:color .2s;font-size:9px}
 .btab.active,.btab:hover{color:var(--green)}.bico{font-size:15px;line-height:1}
 @media(min-width:768px){#bottom-bar{display:none!important}body{padding-bottom:0}}
-@media(max-width:767px){#nav .nav-tabs{display:flex}#nav .nav-right{display:flex}#bottom-bar{display:flex}#ham-drawer{width:100%}}
+@media(max-width:767px){#nav .nav-tabs{display:none}#nav .nav-right{display:flex}#bottom-bar{display:flex}#ham-drawer{width:100%}.nav-btn-text{display:none}}
 
 /* VIEWS */
 .view{display:none}.view.active{display:block}

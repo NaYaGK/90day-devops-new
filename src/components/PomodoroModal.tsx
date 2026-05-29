@@ -19,14 +19,32 @@ export const PomodoroModal: React.FC<PomodoroModalProps> = ({
   studyHours,
 }) => {
   const [mode, setMode] = useState<TimerMode>('focus');
-  const [timeLeft, setTimeLeft] = useState<number>(25 * 60); // default 25 mins
+  
+  // Custom durations per mode in minutes
+  const [durations, setDurations] = useState<Record<TimerMode, number>>(() => {
+    try {
+      const stored = localStorage.getItem('pomo_custom_durations');
+      if (stored) return JSON.parse(stored);
+    } catch (_) {}
+    return { focus: 25, short: 5, long: 15 };
+  });
+
+  const [timeLeft, setTimeLeft] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem('pomo_custom_durations');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return (parsed.focus || 25) * 60;
+      }
+    } catch (_) {}
+    return 25 * 60;
+  });
+
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any | null>(null);
 
   const getDuration = (m: TimerMode) => {
-    if (m === 'focus') return 25 * 60;
-    if (m === 'short') return 5 * 60;
-    return 15 * 60;
+    return (durations[m] || 25) * 60;
   };
 
   const handleModeChange = (newMode: TimerMode) => {
@@ -34,6 +52,17 @@ export const PomodoroModal: React.FC<PomodoroModalProps> = ({
     setIsRunning(false);
     setTimeLeft(getDuration(newMode));
     if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  const handleDurationChange = (mins: number) => {
+    if (isNaN(mins) || mins < 1) return;
+    const next = { ...durations, [mode]: mins };
+    setDurations(next);
+    setTimeLeft(mins * 60);
+    setIsRunning(false);
+    try {
+      localStorage.setItem('pomo_custom_durations', JSON.stringify(next));
+    } catch (_) {}
   };
 
   useEffect(() => {
@@ -101,20 +130,44 @@ export const PomodoroModal: React.FC<PomodoroModalProps> = ({
             className={`pomo-mode-btn ${mode === 'focus' ? 'active' : ''}`} 
             onClick={() => handleModeChange('focus')}
           >
-            25m
+            {durations.focus}m
           </button>
           <button 
             className={`pomo-mode-btn ${mode === 'short' ? 'active' : ''}`} 
             onClick={() => handleModeChange('short')}
           >
-            5m
+            {durations.short}m
           </button>
           <button 
             className={`pomo-mode-btn ${mode === 'long' ? 'active' : ''}`} 
             onClick={() => handleModeChange('long')}
           >
-            15m
+            {durations.long}m
           </button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', margin: '10px 0 6px', fontSize: '11px', color: 'var(--sub)' }}>
+          <label htmlFor="pomo-custom-input" style={{ fontFamily: 'var(--mono)', fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Set Minutes:</label>
+          <input
+            id="pomo-custom-input"
+            type="number"
+            min="1"
+            max="180"
+            value={durations[mode] || ''}
+            onChange={(e) => handleDurationChange(Number(e.target.value))}
+            style={{
+              width: '54px',
+              background: 'var(--s2)',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              color: 'var(--text)',
+              textAlign: 'center',
+              padding: '3px 6px',
+              fontFamily: 'var(--mono)',
+              fontSize: '11px',
+              outline: 'none'
+            }}
+          />
         </div>
 
         <div className="pomo-ring">

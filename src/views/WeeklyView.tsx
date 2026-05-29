@@ -27,20 +27,8 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ appState }) => {
     showToast('🚀 2× XP activated for today!', 'rgba(255,200,80,.12)');
   };
 
-  const handleNotificationEnable = () => {
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      Notification.requestPermission().then(p => {
-        if (p === 'granted') {
-          showToast('✓ Notifications enabled! You\'ll be reminded when reviews are due.', 'rgba(0,217,160,.1)');
-        }
-      });
-    }
-  };
-
   const wd = weekData(0);
   const maxDay = Math.max(1, ...wd.map(d => d.count));
-
-  const hasNotificationPermission = 'Notification' in window && Notification.permission === 'granted';
 
   return (
     <div className="wrap">
@@ -178,31 +166,7 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ appState }) => {
         })}
       </div>
 
-      {/* Notification Card */}
-      <div style={{ background: 'var(--s1)', border: '1px solid var(--border)', borderRadius: 'var(--r12)', padding: '16px', marginTop: '12px' }}>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--sub)', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '10px' }}>
-          Push Notifications for Spaced Repetition
-        </div>
-        <div style={{ fontSize: '13px', color: 'var(--sub)', marginBottom: '12px' }}>
-          Get notified when reviews are due. Works in Chrome and Edge on desktop/Android.
-        </div>
-        <button
-          onClick={handleNotificationEnable}
-          style={{
-            background: hasNotificationPermission ? 'rgba(0,217,160,.08)' : 'var(--s2)',
-            border: `1px solid ${hasNotificationPermission ? 'var(--green)' : 'var(--border)'}`,
-            color: hasNotificationPermission ? 'var(--green)' : 'var(--text)',
-            fontFamily: 'var(--mono)',
-            fontSize: '12px',
-            padding: '8px 16px',
-            borderRadius: 'var(--r8)',
-            cursor: 'pointer',
-            transition: 'all .2s'
-          }}
-        >
-          {hasNotificationPermission ? '✓ Notifications enabled' : '🔔 Enable review notifications'}
-        </button>
-      </div>
+
     </div>
   );
 };
