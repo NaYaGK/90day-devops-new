@@ -33,6 +33,9 @@ export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<string>('roadmap');
   const [focusDay, setFocusDay] = useState<string>('0_0');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>(() => {
+    return (localStorage.getItem('devops90_font_size') as any) || 'md';
+  });
 
   // Modals visibility
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -77,6 +80,26 @@ export const App: React.FC = () => {
     setTheme(nextTheme);
     localStorage.setItem('devops90_theme', nextTheme);
     document.documentElement.setAttribute('data-theme', nextTheme);
+  };
+
+  // Handle Font Size Initialisation and changes
+  useEffect(() => {
+    let scale = '1';
+    if (fontSize === 'sm') scale = '0.9';
+    if (fontSize === 'md') scale = '1';
+    if (fontSize === 'lg') scale = '1.15';
+    if (fontSize === 'xl') scale = '1.3';
+    document.documentElement.style.setProperty('--font-scale', scale);
+    localStorage.setItem('devops90_font_size', fontSize);
+  }, [fontSize]);
+
+  const cycleFontSize = () => {
+    setFontSize(prev => {
+      if (prev === 'sm') return 'md';
+      if (prev === 'md') return 'lg';
+      if (prev === 'lg') return 'xl';
+      return 'sm';
+    });
   };
 
   const handleOpenSettings = () => {
@@ -224,6 +247,9 @@ export const App: React.FC = () => {
           <button className="nav-btn" onClick={toggleTheme} title="Toggle Theme">
             {theme === 'dark' ? '🌙' : '☀️'} <span className="nav-btn-text">Theme</span>
           </button>
+          <button className="nav-btn" onClick={cycleFontSize} title="Adjust Font Size">
+            {fontSize === 'sm' ? 'Aa⁻' : fontSize === 'md' ? 'Aa' : fontSize === 'lg' ? 'Aa⁺' : 'Aa++'} <span className="nav-btn-text">Font</span>
+          </button>
           <button className="nav-btn" onClick={handleOpenSettings} title="Settings Keys">🔑 <span className="nav-btn-text">Keys</span></button>
         </div>
       </nav>
@@ -250,6 +276,13 @@ export const App: React.FC = () => {
           <button className="ham-item" onClick={handleNotificationEnable} style={{ cursor: 'pointer' }}>
             <span className="ham-ico">{hasNotificationPermission ? '🔔' : '🔕'}</span>
             {hasNotificationPermission ? 'Notifications Enabled' : 'Enable Notifications'}
+          </button>
+        </div>
+        <div className="ham-section">
+          <div className="ham-label">🔎 Font Size</div>
+          <button className="ham-item" onClick={cycleFontSize} style={{ cursor: 'pointer' }}>
+            <span className="ham-ico">{fontSize === 'sm' ? 'Aa⁻' : fontSize === 'md' ? 'Aa' : fontSize === 'lg' ? 'Aa⁺' : 'Aa++'}</span>
+            Font: {fontSize === 'sm' ? 'Small (90%)' : fontSize === 'md' ? 'Normal (100%)' : fontSize === 'lg' ? 'Large (115%)' : 'Extra Large (130%)'}
           </button>
         </div>
         <div className="ham-section">

@@ -42,4 +42,34 @@ describe('App component rendering and routing tests', () => {
     fireEvent.click(btn);
     expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   });
+
+  it('should render Font size cycle button and handle font size cycling', () => {
+    localStorage.removeItem('devops90_font_size');
+    
+    render(<App />);
+    
+    const fontBtn = screen.getByTitle('Adjust Font Size');
+    expect(fontBtn).toBeDefined();
+    expect(fontBtn.textContent).toContain('Aa');
+    
+    // Cycle to lg (Large) -> Aa⁺
+    fireEvent.click(fontBtn);
+    expect(fontBtn.textContent).toContain('Aa⁺');
+    expect(localStorage.getItem('devops90_font_size')).toBe('lg');
+    
+    // Cycle to xl (Extra Large) -> Aa++
+    fireEvent.click(fontBtn);
+    expect(fontBtn.textContent).toContain('Aa++');
+    expect(localStorage.getItem('devops90_font_size')).toBe('xl');
+
+    // Cycle to sm (Small) -> Aa⁻
+    fireEvent.click(fontBtn);
+    expect(fontBtn.textContent).toContain('Aa⁻');
+    expect(localStorage.getItem('devops90_font_size')).toBe('sm');
+
+    // Cycle back to md (Normal) -> Aa
+    fireEvent.click(fontBtn);
+    expect(fontBtn.textContent).toContain('Aa');
+    expect(localStorage.getItem('devops90_font_size')).toBe('md');
+  });
 });

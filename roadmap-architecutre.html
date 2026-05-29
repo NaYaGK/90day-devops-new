@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roadmap Tracker — Architecture Guide</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap"
     rel="stylesheet" />
   <style>
     * {
@@ -31,6 +31,8 @@
       --pink: #ff7eb3;
       --orange: #ff8c42;
       --red: #ff6b6b;
+      --font-body: 'Roboto', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
     }
 
     html {
@@ -38,7 +40,7 @@
     }
 
     body {
-      font-family: 'Outfit', sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -82,7 +84,7 @@
     }
 
     .nav-link {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 600;
       color: var(--sub);
@@ -134,7 +136,7 @@
 
     .hero-badge {
       display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -173,7 +175,7 @@
     }
 
     .tech-pill {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 11px;
       padding: 4px 12px;
       border-radius: 20px;
@@ -196,7 +198,7 @@
     }
 
     .section-num {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 600;
       padding: 4px 10px;
@@ -301,7 +303,7 @@
       padding: 18px 20px;
       margin: 12px 0;
       overflow-x: auto;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 12px;
       line-height: 1.8;
       color: #c0b0ff;
@@ -309,7 +311,7 @@
     }
 
     code {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 12px;
       background: rgba(120, 100, 255, .1);
       padding: 2px 7px;
@@ -363,7 +365,7 @@
 
     td:first-child {
       color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 12px;
       white-space: nowrap
     }
@@ -371,7 +373,7 @@
     .tag {
       display: inline-block;
       font-size: 10px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       padding: 2px 8px;
       border-radius: 4px;
       font-weight: 600;
@@ -469,7 +471,7 @@
 
     /* ── FILE TREE ── */
     .file-tree {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 12px;
       background: var(--card);
       border: 1px solid var(--border);
@@ -591,7 +593,7 @@
 
     .deploy-step::before {
       content: counter(step);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 700;
       width: 24px;
@@ -634,7 +636,7 @@
     }
 
     .stat-num {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 4px
@@ -687,7 +689,7 @@
     }
 
     .layer-label {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 700;
       padding: 3px 10px;
@@ -724,7 +726,7 @@
     }
 
     .lf {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 10px;
       padding: 2px 8px;
       border-radius: 4px;
@@ -759,6 +761,61 @@
         font-size: 2rem
       }
     }
+
+    /* ── FONT SIZE SCALING OVERRIDES ── */
+    :root {
+      --font-scale: 1;
+    }
+    .font-btn:hover {
+      color: var(--text) !important;
+      border-color: var(--sub) !important;
+    }
+    .font-btn.active {
+      color: var(--green) !important;
+      border-color: var(--green) !important;
+      background: rgba(0, 217, 160, 0.08) !important;
+    }
+    body {
+      font-size: calc(14px * var(--font-scale)) !important;
+    }
+    p, li, td, pre, code, .card p, .flow-content p, .file-tree, .concept-answer, .tip, .warn, .note {
+      font-size: calc(12px * var(--font-scale)) !important;
+    }
+    p { font-size: calc(14px * var(--font-scale)) !important; }
+    .card p { font-size: calc(14px * var(--font-scale)) !important; }
+    .hero p { font-size: calc(16px * var(--font-scale)) !important; }
+    .flow-content p { font-size: calc(12px * var(--font-scale)) !important; }
+    .file-tree { font-size: calc(12px * var(--font-scale)) !important; }
+    .concept-answer { font-size: calc(13px * var(--font-scale)) !important; }
+    .tip, .warn, .note { font-size: calc(13px * var(--font-scale)) !important; }
+    pre, code { font-size: calc(12px * var(--font-scale)) !important; }
+    td { font-size: calc(13px * var(--font-scale)) !important; }
+    td:first-child { font-size: calc(12px * var(--font-scale)) !important; }
+    h3, .card h3 { font-size: calc(15px * var(--font-scale)) !important; }
+    h4, .flow-content h4 { font-size: calc(13px * var(--font-scale)) !important; }
+    .section-header h2 { font-size: calc(clamp(1.3rem, 3vw, 1.8rem) * var(--font-scale)) !important; }
+    .hero h1 { font-size: calc(clamp(2.2rem, 6vw, 4rem) * var(--font-scale)) !important; }
+
+    /* INLINE STYLE OVERRIDES */
+    [style*="font-size: 8px"], [style*="font-size:8px"] { font-size: calc(8px * var(--font-scale)) !important; }
+    [style*="font-size: 9px"], [style*="font-size:9px"] { font-size: calc(9px * var(--font-scale)) !important; }
+    [style*="font-size: 10px"], [style*="font-size:10px"] { font-size: calc(10px * var(--font-scale)) !important; }
+    [style*="font-size: 11px"], [style*="font-size:11px"] { font-size: calc(11px * var(--font-scale)) !important; }
+    [style*="font-size: 12px"], [style*="font-size:12px"] { font-size: calc(12px * var(--font-scale)) !important; }
+    [style*="font-size: 13px"], [style*="font-size:13px"] { font-size: calc(13px * var(--font-scale)) !important; }
+    [style*="font-size: 14px"], [style*="font-size:14px"] { font-size: calc(14px * var(--font-scale)) !important; }
+    [style*="font-size: 15px"], [style*="font-size:15px"] { font-size: calc(15px * var(--font-scale)) !important; }
+    [style*="font-size: 16px"], [style*="font-size:16px"] { font-size: calc(16px * var(--font-scale)) !important; }
+    [style*="font-size: 17px"], [style*="font-size:17px"] { font-size: calc(17px * var(--font-scale)) !important; }
+    [style*="font-size: 18px"], [style*="font-size:18px"] { font-size: calc(18px * var(--font-scale)) !important; }
+    [style*="font-size: 20px"], [style*="font-size:20px"] { font-size: calc(20px * var(--font-scale)) !important; }
+    [style*="font-size: 22px"], [style*="font-size:22px"] { font-size: calc(22px * var(--font-scale)) !important; }
+    [style*="font-size: 24px"], [style*="font-size:24px"] { font-size: calc(24px * var(--font-scale)) !important; }
+    [style*="font-size: 28px"], [style*="font-size:28px"] { font-size: calc(28px * var(--font-scale)) !important; }
+    [style*="font-size: 32px"], [style*="font-size:32px"] { font-size: calc(32px * var(--font-scale)) !important; }
+    [style*="font-size: 36px"], [style*="font-size:36px"] { font-size: calc(36px * var(--font-scale)) !important; }
+    [style*="font-size: 46px"], [style*="font-size:46px"] { font-size: calc(46px * var(--font-scale)) !important; }
+    [style*="font-size: 52px"], [style*="font-size:52px"] { font-size: calc(52px * var(--font-scale)) !important; }
   </style>
 </head>
 
@@ -777,6 +834,12 @@
       <a class="nav-link" href="#tests">⑦ Tests</a>
       <a class="nav-link" href="#deploy">⑧ Deploy</a>
       <a class="nav-link" href="#concepts">⑨ Concepts</a>
+      <div class="font-controls" style="margin-left: auto; display: flex; align-items: center; gap: 4px; padding: 0 16px; flex-shrink: 0;">
+        <span style="font-family: var(--font-mono); font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">Font:</span>
+        <button class="font-btn active" data-size="1" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">100%</button>
+        <button class="font-btn" data-size="1.15" style="background: var(--surface); border: 1px solid var(--border); color: var(--sub); font-family: var(--font-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">115%</button>
+        <button class="font-btn" data-size="1.3" style="background: var(--surface); border: 1px solid var(--border); color: var(--sub); font-family: var(--font-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">130%</button>
+      </div>
     </div>
   </nav>
 
@@ -1614,7 +1677,7 @@ taskId(2, 4, 1)  → "p2d4t1"  // Phase 3, Day 5, Task 2
 
     <!-- FOOTER -->
     <footer style="border-top:1px solid var(--border);padding-top:32px;text-align:center">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px">
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:1px">
         ROADMAP TRACKER · REACT 18 + TYPESCRIPT 5 + TAILWIND CSS 3 + VITE 5 · ZERO TO HIRED IN 80 DAYS
       </div>
     </footer>
@@ -1654,6 +1717,31 @@ taskId(2, 4, 1)  → "p2d4t1"  // Phase 3, Day 5, Task 2
       document.querySelectorAll('.concept-card').forEach(c => c.classList.remove('open'));
       if (!wasOpen) card.classList.add('open');
     }
+
+    // ── Font Scaling ─────────────────────────────────────────────────────────────
+    const fontBtns = document.querySelectorAll('.font-btn');
+    const savedScale = localStorage.getItem('devops90_font_scale') || '1';
+    
+    function applyFontScale(scale) {
+      document.documentElement.style.setProperty('--font-scale', scale);
+      fontBtns.forEach(btn => {
+        if (btn.getAttribute('data-size') === scale) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      localStorage.setItem('devops90_font_scale', scale);
+    }
+    
+    fontBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const scale = btn.getAttribute('data-size');
+        applyFontScale(scale);
+      });
+    });
+    
+    applyFontScale(savedScale);
   </script>
 
 </body>
