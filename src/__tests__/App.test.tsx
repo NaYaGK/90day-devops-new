@@ -30,41 +30,16 @@ describe('App component rendering and routing tests', () => {
     expect(screen.getByText(/Day Progress Kanban/i)).toBeDefined();
   });
 
-  it('should display the roadmap flow toggle and show/hide the flow elements', () => {
+  it('should render BackToTop button and handle click', () => {
+    const scrollToMock = vi.fn();
+    window.scrollTo = scrollToMock;
+    
     render(<App />);
     
-    // Toggle button should exist
-    const toggleBtn = screen.getByText(/Roadmap Architecture Flow/i);
-    expect(toggleBtn).toBeDefined();
-
-    // Two elements should be visible initially (one in flow chart, one in filters)
-    expect(screen.getAllByText('Foundations & Culture').length).toBe(2);
-
-    // Clicking toggle button should collapse/hide the flow
-    fireEvent.click(toggleBtn);
-    // Only the filter button remains
-    expect(screen.getAllByText('Foundations & Culture').length).toBe(1);
-
-    // Clicking toggle button again should show the flow again
-    fireEvent.click(toggleBtn);
-    expect(screen.getAllByText('Foundations & Culture').length).toBe(2);
-  });
-
-  it('should allow filtering phases by clicking nodes in the flowchart', () => {
-    render(<App />);
+    const btn = screen.getByLabelText('Back to top');
+    expect(btn).toBeDefined();
     
-    // Click on Phase 1 node (first element is the node, second is the fpill button)
-    const phaseNodes = screen.getAllByText('Foundations & Culture');
-    fireEvent.click(phaseNodes[0]);
-
-    // Verify clear filter bar is rendered
-    expect(screen.getByText(/Clear Filter & Show All/i)).toBeDefined();
-
-    // Click clear filter button
-    const clearBtn = screen.getByText(/Clear Filter & Show All/i);
-    fireEvent.click(clearBtn);
-    expect(screen.queryByText(/Clear Filter & Show All/i)).toBeNull();
+    fireEvent.click(btn);
+    expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   });
 });
-
-

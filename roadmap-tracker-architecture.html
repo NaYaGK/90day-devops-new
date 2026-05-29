@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roadmap Tracker — Architecture Guide</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #08080f;
+            --surface: #0f0f1a;
+            --card: #13131f;
+            --card2: #16161e;
+            --border: #1e1e2e;
+            --text: #e2e2f0;
+            --sub: #7070a0;
+            --muted: #3a3a5c;
+            --purple: #7864ff;
+            --green: #00d9a0;
+            --blue: #4fa8ff;
+            --gold: #ffc850;
+            --pink: #ff7eb3;
+            --orange: #ff8c42;
+            --red: #ff6b6b;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.7
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(circle, rgba(120, 100, 255, .05) 1px, transparent 1px);
+            background-size: 28px 28px
+        }
+
+        /* ── NAV ── */
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(8, 8, 15, .92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow-x: auto
+        }
+
+        .nav-inner::-webkit-scrollbar {
+            display: none
+        }
+
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--sub);
+            padding: 14px 16px;
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all .15s;
+            letter-spacing: .3px
+        }
+
+        .nav-link:hover {
+            color: var(--text)
+        }
+
+        .nav-link.active {
+            color: var(--purple);
+            border-bottom-color: var(--purple)
+        }
+
+        /* ── TOP STRIP ── */
+        #top-strip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            z-index: 200;
+            background: linear-gradient(90deg, var(--purple), var(--green), var(--blue));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform .3s
+        }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 100px 24px 80px;
+            position: relative;
+            z-index: 1
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 60px 0 80px
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(120, 100, 255, .3);
+            background: rgba(120, 100, 255, .08);
+            color: var(--purple);
+            margin-bottom: 24px
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text) 30%, var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--sub);
+            max-width: 560px;
+            margin: 0 auto 36px
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center
+        }
+
+        .tech-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--sub)
+        }
+
+        /* ── SECTION ── */
+        section {
+            margin-bottom: 80px;
+            scroll-margin-top: 56px
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px
+        }
+
+        .section-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(120, 100, 255, .12);
+            color: var(--purple);
+            border: 1px solid rgba(120, 100, 255, .2)
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 700;
+            letter-spacing: -0.5px
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 28px
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 12px
+        }
+
+        .card-sm {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 8px
+        }
+
+        .card p {
+            font-size: 14px;
+            color: var(--sub);
+            line-height: 1.8
+        }
+
+        .card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px
+        }
+
+        .tip {
+            background: rgba(0, 217, 160, .06);
+            border: 1px solid rgba(0, 217, 160, .18);
+            border-left: 3px solid var(--green);
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--sub)
+        }
+
+        .tip strong {
+            color: var(--green)
+        }
+
+        .warn {
+            background: rgba(255, 200, 80, .05);
+            border: 1px solid rgba(255, 200, 80, .15);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--sub)
+        }
+
+        .warn strong {
+            color: var(--gold)
+        }
+
+        .note {
+            background: rgba(120, 100, 255, .05);
+            border: 1px solid rgba(120, 100, 255, .15);
+            border-left: 3px solid var(--purple);
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--sub)
+        }
+
+        .note strong {
+            color: var(--purple)
+        }
+
+        /* ── CODE BLOCKS ── */
+        pre {
+            background: rgba(120, 100, 255, .06);
+            border: 1px solid rgba(120, 100, 255, .15);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 12px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #c0b0ff;
+            tab-size: 2
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: rgba(120, 100, 255, .1);
+            padding: 2px 7px;
+            border-radius: 4px;
+            color: #c0b0ff
+        }
+
+        /* ── TABLES ── */
+        .tbl-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+            border-radius: 10px;
+            border: 1px solid var(--border)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        thead tr {
+            background: rgba(120, 100, 255, .1)
+        }
+
+        thead th {
+            padding: 11px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text);
+            letter-spacing: .3px;
+            white-space: nowrap
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        tbody tr:hover {
+            background: rgba(120, 100, 255, .05)
+        }
+
+        td {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            color: var(--sub);
+            vertical-align: top;
+            line-height: 1.5
+        }
+
+        td:first-child {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            white-space: nowrap
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        .tag-data {
+            background: rgba(0, 217, 160, .1);
+            color: var(--green);
+            border: 1px solid rgba(0, 217, 160, .2)
+        }
+
+        .tag-ui {
+            background: rgba(79, 168, 255, .1);
+            color: var(--blue);
+            border: 1px solid rgba(79, 168, 255, .2)
+        }
+
+        .tag-logic {
+            background: rgba(255, 200, 80, .1);
+            color: var(--gold);
+            border: 1px solid rgba(255, 200, 80, .2)
+        }
+
+        .tag-test {
+            background: rgba(255, 107, 107, .1);
+            color: var(--red);
+            border: 1px solid rgba(255, 107, 107, .2)
+        }
+
+        .tag-config {
+            background: rgba(120, 100, 255, .1);
+            color: var(--purple);
+            border: 1px solid rgba(120, 100, 255, .2)
+        }
+
+        /* ── FLOW STEPS ── */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 16px 0
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 14px;
+            align-items: stretch
+        }
+
+        .flow-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            width: 24px
+        }
+
+        .flow-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px
+        }
+
+        .flow-connector {
+            flex: 1;
+            width: 1px;
+            background: var(--border);
+            margin: 3px 0
+        }
+
+        .flow-content {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 8px
+        }
+
+        .flow-content h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px
+        }
+
+        .flow-content p {
+            font-size: 12px;
+            color: var(--sub);
+            line-height: 1.6
+        }
+
+        /* ── FILE TREE ── */
+        .file-tree {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            line-height: 2;
+            overflow-x: auto
+        }
+
+        .ft-folder {
+            color: var(--gold)
+        }
+
+        .ft-file {
+            color: var(--text)
+        }
+
+        .ft-comment {
+            color: var(--muted)
+        }
+
+        .ft-data {
+            color: var(--green)
+        }
+
+        .ft-ui {
+            color: var(--blue)
+        }
+
+        .ft-logic {
+            color: var(--orange)
+        }
+
+        .ft-test {
+            color: var(--red)
+        }
+
+        .ft-config {
+            color: var(--purple)
+        }
+
+        /* ── CONCEPT CARDS ── */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+            margin: 16px 0
+        }
+
+        .concept-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: border-color .15s, transform .15s
+        }
+
+        .concept-card:hover {
+            border-color: rgba(120, 100, 255, .3);
+            transform: translateY(-2px)
+        }
+
+        .concept-card.open {
+            border-color: rgba(120, 100, 255, .3)
+        }
+
+        .concept-icon {
+            font-size: 22px;
+            margin-bottom: 10px
+        }
+
+        .concept-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px
+        }
+
+        .concept-card .q {
+            font-size: 12px;
+            color: var(--sub);
+            line-height: 1.6
+        }
+
+        .concept-answer {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--sub);
+            line-height: 1.7
+        }
+
+        .concept-card.open .concept-answer {
+            display: block
+        }
+
+        /* ── DEPLOY STEPS ── */
+        .deploy-steps {
+            counter-reset: step;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0
+        }
+
+        .deploy-step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            counter-increment: step
+        }
+
+        .deploy-step::before {
+            content: counter(step);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(120, 100, 255, .15);
+            color: var(--purple);
+            border: 1px solid rgba(120, 100, 255, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        .deploy-step p {
+            font-size: 13px;
+            color: var(--sub);
+            line-height: 1.6
+        }
+
+        .deploy-step strong {
+            color: var(--text)
+        }
+
+        /* ── STATS ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin: 16px 0
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 16px;
+            text-align: center
+        }
+
+        .stat-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--sub);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        /* ── LAYER DIAGRAM ── */
+        .layers {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin: 20px 0
+        }
+
+        .layer-row {
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px
+        }
+
+        .layer-1 {
+            background: rgba(0, 217, 160, .08);
+            border: 1px solid rgba(0, 217, 160, .2)
+        }
+
+        .layer-2 {
+            background: rgba(255, 200, 80, .07);
+            border: 1px solid rgba(255, 200, 80, .18)
+        }
+
+        .layer-3 {
+            background: rgba(79, 168, 255, .07);
+            border: 1px solid rgba(79, 168, 255, .18)
+        }
+
+        .layer-connector {
+            text-align: center;
+            color: var(--muted);
+            font-size: 20px;
+            line-height: 1;
+            padding: 2px 0
+        }
+
+        .layer-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            white-space: nowrap
+        }
+
+        .l1-label {
+            background: rgba(0, 217, 160, .12);
+            color: var(--green)
+        }
+
+        .l2-label {
+            background: rgba(255, 200, 80, .12);
+            color: var(--gold)
+        }
+
+        .l3-label {
+            background: rgba(79, 168, 255, .12);
+            color: var(--blue)
+        }
+
+        .layer-row p {
+            font-size: 13px;
+            color: var(--sub);
+            flex: 1
+        }
+
+        .layer-files {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px
+        }
+
+        .lf {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            color: var(--sub)
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--muted);
+            border-radius: 3px
+        }
+
+        @media(max-width:600px) {
+            .page {
+                padding: 90px 16px 60px
+            }
+
+            .hero {
+                padding: 40px 0 60px
+            }
+
+            .hero h1 {
+                font-size: 2rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="top-strip"></div>
+
+    <nav id="nav">
+        <div class="nav-inner">
+            <a class="nav-link active" href="#why-empty">① Why Empty</a>
+            <a class="nav-link" href="#structure">② Structure</a>
+            <a class="nav-link" href="#layers">③ Layers</a>
+            <a class="nav-link" href="#data-flow">④ Data Flow</a>
+            <a class="nav-link" href="#types">⑤ Types</a>
+            <a class="nav-link" href="#commands">⑥ Commands</a>
+            <a class="nav-link" href="#tests">⑦ Tests</a>
+            <a class="nav-link" href="#deploy">⑧ Deploy</a>
+            <a class="nav-link" href="#concepts">⑨ Concepts</a>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-badge">Architecture Guide · v1.0</div>
+            <h1>Roadmap Tracker<br />Explained</h1>
+            <p>How every file works, how data flows, and why the project is built the way it is — explained like a
+                senior dev would.</p>
+            <div class="tech-stack">
+                <span class="tech-pill">React 18</span>
+                <span class="tech-pill">TypeScript 5</span>
+                <span class="tech-pill">Tailwind CSS 3</span>
+                <span class="tech-pill">Vite 5</span>
+                <span class="tech-pill">Vitest</span>
+                <span class="tech-pill">localStorage</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1 -->
+        <section id="why-empty">
+            <div class="section-header">
+                <span class="section-num">01</span>
+                <h2>Why index.html Contains No Data</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="card">
+                <p>This is the most common question. The answer is fundamental to understanding React.
+                    <code>index.html</code> is just an empty launch pad — React fills it at runtime using JavaScript.
+                </p>
+            </div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Traditional HTML</th>
+                            <th>React (This Project)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>index.html</td>
+                            <td>Contains ALL visible content</td>
+                            <td>Empty shell — just &lt;div id="root"&gt;</td>
+                        </tr>
+                        <tr>
+                            <td>Content appears</td>
+                            <td>Immediately on file load</td>
+                            <td>After JavaScript runs (milliseconds)</td>
+                        </tr>
+                        <tr>
+                            <td>Data location</td>
+                            <td>Written manually in HTML</td>
+                            <td>In phases.ts / notes.ts — imported by React</td>
+                        </tr>
+                        <tr>
+                            <td>Interactivity</td>
+                            <td>Needs manual DOM code</td>
+                            <td>Built into components with useState / useEffect</td>
+                        </tr>
+                        <tr>
+                            <td>Dark mode, search</td>
+                            <td>Complex manual JavaScript</td>
+                            <td>Handled automatically by hooks and Tailwind</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size:15px;font-weight:600;color:var(--text);margin:24px 0 12px">The 6-Step Boot Sequence
+            </h3>
+            <div class="flow">
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--purple)"></div>
+                        <div class="flow-connector"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>① Browser receives index.html</h4>
+                        <p>An almost-empty file. Contains only <code>&lt;div id="root"&gt;&lt;/div&gt;</code> and one
+                            script tag pointing to main.tsx.</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--blue)"></div>
+                        <div class="flow-connector"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>② Browser reads the &lt;script&gt; tag</h4>
+                        <p>Loads <code>/src/main.tsx</code> — the JS bundle compiled by Vite from all your TypeScript
+                            files.</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--green)"></div>
+                        <div class="flow-connector"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>③ main.tsx executes</h4>
+                        <p>Calls <code>ReactDOM.createRoot(document.getElementById('root'))</code> — tells React where
+                            to work.</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--gold)"></div>
+                        <div class="flow-connector"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>④ React renders App.tsx</h4>
+                        <p>App.tsx pulls in PHASES data, NOTES data, useTrackerState, useTheme, and all 8 components.
+                        </p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--orange)"></div>
+                        <div class="flow-connector"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>⑤ Components mount into #root</h4>
+                        <p>React injects all the generated HTML into the empty <code>&lt;div id="root"&gt;</code>. The
+                            DOM is now full.</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-line">
+                        <div class="flow-dot" style="background:var(--green)"></div>
+                    </div>
+                    <div class="flow-content">
+                        <h4>⑥ You see the full tracker ✅</h4>
+                        <p>Stats, phases, tasks, notes panel — everything rendered and interactive. index.html never
+                            changed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="note"><strong>Key insight:</strong> The index.html being empty is correct. It is the empty
+                stage. React is the performer who fills it. This is called Client Side Rendering (CSR).</div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="structure">
+            <div class="section-header">
+                <span class="section-num">02</span>
+                <h2>Complete Project Structure</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="file-tree">
+                <span class="ft-folder">roadmap-tracker/</span>
+                ├── <span class="ft-config">index.html</span> <span class="ft-comment">← empty browser shell</span>
+                ├── <span class="ft-config">vite.config.ts</span> <span class="ft-comment">← build tool + test
+                    runner</span>
+                ├── <span class="ft-config">tsconfig.json</span> <span class="ft-comment">← TypeScript rules (strict:
+                    true)</span>
+                ├── <span class="ft-config">tailwind.config.js</span> <span class="ft-comment">← custom fonts + brand
+                    colors</span>
+                ├── <span class="ft-config">package.json</span> <span class="ft-comment">← scripts + dependencies</span>
+                └── <span class="ft-folder">src/</span>
+                ├── <span class="ft-ui">main.tsx</span> <span class="ft-comment">← React bootstrap / entry</span>
+                ├── <span class="ft-ui">App.tsx</span> <span class="ft-comment">← root component, wires
+                    everything</span>
+                ├── <span class="ft-config">index.css</span> <span class="ft-comment">← Tailwind + custom
+                    animations</span>
+                ├── <span class="ft-folder">types/</span>
+                │ └── <span class="ft-config">index.ts</span> <span class="ft-comment">← ALL TypeScript
+                    interfaces</span>
+                ├── <span class="ft-folder">data/</span>
+                │ ├── <span class="ft-data">phases.ts</span> <span class="ft-comment">← 6 phases, 80 days, every
+                    task</span>
+                │ └── <span class="ft-data">notes.ts</span> <span class="ft-comment">← structured notes per day</span>
+                ├── <span class="ft-folder">hooks/</span>
+                │ ├── <span class="ft-logic">useTrackerState.ts</span> <span class="ft-comment">← task state +
+                    localStorage + streak</span>
+                │ └── <span class="ft-logic">useTheme.ts</span> <span class="ft-comment">← dark / light toggle</span>
+                ├── <span class="ft-folder">utils/</span>
+                │ └── <span class="ft-logic">index.ts</span> <span class="ft-comment">← pure helper functions</span>
+                ├── <span class="ft-folder">components/</span>
+                │ ├── <span class="ft-ui">Header.tsx</span> <span class="ft-comment">← title + theme toggle +
+                    reset</span>
+                │ ├── <span class="ft-ui">StatsBar.tsx</span> <span class="ft-comment">← 5 stat cards</span>
+                │ ├── <span class="ft-ui">ProgressBar.tsx</span> <span class="ft-comment">← overall bar + next task
+                    banner</span>
+                │ ├── <span class="ft-ui">SearchAndTabs.tsx</span> <span class="ft-comment">← search input + filter
+                    tabs</span>
+                │ ├── <span class="ft-ui">PhaseCard.tsx</span> <span class="ft-comment">← collapsible phase block</span>
+                │ ├── <span class="ft-ui">DayBlock.tsx</span> <span class="ft-comment">← day header + tasks + quiz
+                    card</span>
+                │ ├── <span class="ft-ui">TaskRow.tsx</span> <span class="ft-comment">← animated checkbox + badge</span>
+                │ └── <span class="ft-ui">NotesPanel.tsx</span> <span class="ft-comment">← slide-over notes
+                    drawer</span>
+                └── <span class="ft-folder">test/</span>
+                ├── <span class="ft-test">utils.test.ts</span> <span class="ft-comment">← 20 unit tests</span>
+                ├── <span class="ft-test">data.test.ts</span> <span class="ft-comment">← 14 data integrity tests</span>
+                ├── <span class="ft-test">useTrackerState.test.ts</span> <span class="ft-comment">← 11 hook tests</span>
+                └── <span class="ft-test">components.test.tsx</span> <span class="ft-comment">← 11 component
+                    tests</span>
+            </div>
+
+            <div class="tbl-wrap" style="margin-top:20px">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Type</th>
+                            <th>What It Does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>index.html</td>
+                            <td><span class="tag tag-config">config</span></td>
+                            <td>Browser entry shell — <code>&lt;div id="root"&gt;</code> + script tag only</td>
+                        </tr>
+                        <tr>
+                            <td>main.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>Mounts React into #root. The ignition key — runs once.</td>
+                        </tr>
+                        <tr>
+                            <td>App.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>Root component. Calls hooks, computes stats, renders all 8 components.</td>
+                        </tr>
+                        <tr>
+                            <td>types/index.ts</td>
+                            <td><span class="tag tag-config">types</span></td>
+                            <td>All TypeScript interfaces. Imported by every file — the shared contract.</td>
+                        </tr>
+                        <tr>
+                            <td>data/phases.ts</td>
+                            <td><span class="tag tag-data">data</span></td>
+                            <td>6 PhaseConfig objects → DayData arrays → Task arrays. All 80 days.</td>
+                        </tr>
+                        <tr>
+                            <td>data/notes.ts</td>
+                            <td><span class="tag tag-data">data</span></td>
+                            <td>NotesMap dictionary — each key maps to NoteData with typed sections.</td>
+                        </tr>
+                        <tr>
+                            <td>hooks/useTrackerState.ts</td>
+                            <td><span class="tag tag-logic">logic</span></td>
+                            <td>Owns ALL task state. Handles toggle, localStorage save/load, streak.</td>
+                        </tr>
+                        <tr>
+                            <td>hooks/useTheme.ts</td>
+                            <td><span class="tag tag-logic">logic</span></td>
+                            <td>Reads/writes the 'dark' class on &lt;html&gt;. Persists to localStorage.</td>
+                        </tr>
+                        <tr>
+                            <td>utils/index.ts</td>
+                            <td><span class="tag tag-logic">logic</span></td>
+                            <td>6 pure functions: taskId, countDone, countTotal, phaseDone, badgeClasses, cn</td>
+                        </tr>
+                        <tr>
+                            <td>components/TaskRow.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>One task row. Animated checkbox + text (line-through when done) + badge.</td>
+                        </tr>
+                        <tr>
+                            <td>components/DayBlock.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>Day header + all TaskRows + Notes button + AI quiz card.</td>
+                        </tr>
+                        <tr>
+                            <td>components/PhaseCard.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>Collapsible phase with mini progress bar + completion pill.</td>
+                        </tr>
+                        <tr>
+                            <td>components/NotesPanel.tsx</td>
+                            <td><span class="tag tag-ui">ui</span></td>
+                            <td>Slide-over drawer. Renders NoteSection by type. Locks body scroll.</td>
+                        </tr>
+                        <tr>
+                            <td>test/utils.test.ts</td>
+                            <td><span class="tag tag-test">test</span></td>
+                            <td>20 tests for all utility functions in isolation.</td>
+                        </tr>
+                        <tr>
+                            <td>test/data.test.ts</td>
+                            <td><span class="tag tag-test">test</span></td>
+                            <td>14 tests validating phases.ts and notes.ts structure + content.</td>
+                        </tr>
+                        <tr>
+                            <td>test/useTrackerState.test.ts</td>
+                            <td><span class="tag tag-test">test</span></td>
+                            <td>11 tests: toggle, persist, streak increment, streak reset.</td>
+                        </tr>
+                        <tr>
+                            <td>test/components.test.tsx</td>
+                            <td><span class="tag tag-test">test</span></td>
+                            <td>11 tests: StatsBar renders, TaskRow click fires, badge classes.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="layers">
+            <div class="section-header">
+                <span class="section-num">03</span>
+                <h2>The Three Clean Layers</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="font-size:14px;color:var(--sub);margin-bottom:20px">Like a well-designed n8n pipeline, the project
+                has three distinct layers that never mix. Each layer only depends on the layer above it — never below.
+            </p>
+
+            <div class="layers">
+                <div class="layer-row layer-1">
+                    <span class="layer-label l1-label">LAYER 1 — DATA</span>
+                    <div style="flex:1">
+                        <p style="color:var(--text);font-weight:600;font-size:14px;margin-bottom:4px">Raw structured
+                            data. No logic, no React, no side effects.</p>
+                        <p style="color:var(--sub);font-size:13px">Just TypeScript arrays and typed objects describing
+                            what the app contains. If you add a new day or fix a task title, only these files change.
+                        </p>
+                        <div class="layer-files">
+                            <span class="lf" style="color:var(--green);border-color:rgba(0,217,160,.2)">phases.ts</span>
+                            <span class="lf" style="color:var(--green);border-color:rgba(0,217,160,.2)">notes.ts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layer-connector" style="text-align:center;font-size:20px;color:var(--muted);padding:4px 0">↓
+                </div>
+                <div class="layer-row layer-2">
+                    <span class="layer-label l2-label">LAYER 2 — LOGIC</span>
+                    <div style="flex:1">
+                        <p style="color:var(--text);font-weight:600;font-size:14px;margin-bottom:4px">Stateful hooks and
+                            pure utility functions. No JSX, no rendering.</p>
+                        <p style="color:var(--sub);font-size:13px">Hooks own state and side effects (localStorage, DOM
+                            class). Utils are pure functions — same input always gives same output. Both are
+                            independently testable.</p>
+                        <div class="layer-files">
+                            <span class="lf"
+                                style="color:var(--gold);border-color:rgba(255,200,80,.2)">useTrackerState.ts</span>
+                            <span class="lf"
+                                style="color:var(--gold);border-color:rgba(255,200,80,.2)">useTheme.ts</span>
+                            <span class="lf"
+                                style="color:var(--gold);border-color:rgba(255,200,80,.2)">utils/index.ts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layer-connector" style="text-align:center;font-size:20px;color:var(--muted);padding:4px 0">↓
+                </div>
+                <div class="layer-row layer-3">
+                    <span class="layer-label l3-label">LAYER 3 — UI</span>
+                    <div style="flex:1">
+                        <p style="color:var(--text);font-weight:600;font-size:14px;margin-bottom:4px">Pure presentation.
+                            Receives data as props, fires events upward.</p>
+                        <p style="color:var(--sub);font-size:13px">Components never touch localStorage, never call
+                            fetch, never compute stats. They render what they receive. This makes them easy to test —
+                            pass props in, check what rendered out.</p>
+                        <div class="layer-files">
+                            <span class="lf" style="color:var(--blue);border-color:rgba(79,168,255,.2)">Header</span>
+                            <span class="lf" style="color:var(--blue);border-color:rgba(79,168,255,.2)">StatsBar</span>
+                            <span class="lf" style="color:var(--blue);border-color:rgba(79,168,255,.2)">PhaseCard</span>
+                            <span class="lf" style="color:var(--blue);border-color:rgba(79,168,255,.2)">DayBlock</span>
+                            <span class="lf" style="color:var(--blue);border-color:rgba(79,168,255,.2)">TaskRow</span>
+                            <span class="lf"
+                                style="color:var(--blue);border-color:rgba(79,168,255,.2)">NotesPanel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip" style="margin-top:20px">
+                <strong>Senior dev rule:</strong> A UI component that reads from localStorage or calls fetch directly is
+                a code smell. Keep layers clean — logic in hooks, display in components.
+            </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="data-flow">
+            <div class="section-header">
+                <span class="section-num">04</span>
+                <h2>Full Data Flow — Like an n8n Pipeline</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Flow 1 — App Startup</h3>
+                <pre>index.html loads
+  └─ main.tsx executes (React bootstrap)
+       └─ App.tsx renders
+            ├─ useTrackerState() → reads localStorage → AppState{}
+            ├─ useTheme() → reads localStorage → 'dark' | 'light'
+            ├─ PHASES imported from phases.ts
+            ├─ NOTES imported from notes.ts
+            └─ All 8 components render with initial state</pre>
+            </div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Flow 2 — User Ticks a Checkbox</h3>
+                <pre>TaskRow — user clicks the row
+  └─ TaskRow.onToggle() fires
+       └─ DayBlock passes up: onToggle(ti)
+            └─ App.tsx handleToggle(pi, di, ti)
+                 └─ useTrackerState.toggleTask(pi, di, ti)
+                      ├─ state["p0d0t2"] = !state["p0d0t2"]
+                      ├─ _streak + _lastDay updated if new day
+                      ├─ saveState() → writes to localStorage
+                      └─ React re-renders:
+                           ├─ TaskRow — checkbox ticks ✓
+                           ├─ StatsBar — Done++ Left--
+                           └─ ProgressBar — bar fills further</pre>
+            </div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Flow 3 — User Clicks the "📖 Notes" Button</h3>
+                <pre>DayBlock — user clicks Notes button for "Day 1"
+  └─ DayBlock fires: onNotes("p0d0", "Day 1 — How The Web Works")
+       └─ App.tsx handleOpenNotes(key, label)
+            ├─ NOTES["p0d0"] looked up in notes.ts
+            ├─ setActiveNote(noteData) — state changes
+            └─ NotesPanel receives note prop
+                 ├─ CSS: translateX(100%) → translateX(0) — slides in
+                 ├─ Body scroll locked (overflow: hidden)
+                 └─ Each NoteSection rendered by type:
+                      h2 → heading, code → pre block, tip → callout...</pre>
+            </div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Flow 4 — User Types in the Search Box</h3>
+                <pre>SearchBar input event fires
+  └─ 200ms debounce timeout (prevents lag)
+       └─ App.tsx setSearch("flexbox")
+            └─ visiblePhases recomputed
+                 └─ Each PhaseCard renders
+                      └─ Each DayBlock checks visibility:
+                           task.t.includes("flexbox")
+                           || day.label.includes("flexbox")
+                           || day.day.includes("flexbox")
+                                ├─ Match → day renders normally
+                                └─ No match → returns null (removed from DOM)</pre>
+            </div>
+
+            <div class="card">
+                <h3>Flow 5 — Theme Toggle</h3>
+                <pre>Header — user clicks ◑ theme button
+  └─ Header fires: onToggle()
+       └─ App.tsx triggers: toggleTheme()
+            └─ useTheme.ts
+                 ├─ setThemeState('light' or 'dark')
+                 ├─ document.documentElement.classList toggle 'dark'
+                 └─ localStorage.setItem('devmap_theme', theme)
+                      └─ Tailwind dark: variants activate/deactivate
+                         All dark:bg-*, dark:text-* classes switch instantly</pre>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="types">
+            <div class="section-header">
+                <span class="section-num">05</span>
+                <h2>TypeScript Type System</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="font-size:14px;color:var(--sub);margin-bottom:16px">All types live in
+                <code>src/types/index.ts</code> and are imported by every file. They are the contracts that prevent data
+                mismatches between layers.</p>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type / Interface</th>
+                            <th>Shape</th>
+                            <th>Used By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TaskKind</td>
+                            <td><code>'concept' | 'code' | 'quiz' | 'project'</code></td>
+                            <td>phases.ts, utils, TaskRow badge</td>
+                        </tr>
+                        <tr>
+                            <td>Task</td>
+                            <td><code>{ t: string; k: TaskKind }</code></td>
+                            <td>phases.ts, DayBlock, TaskRow</td>
+                        </tr>
+                        <tr>
+                            <td>DayData</td>
+                            <td><code>{ day, label, noteKey, tasks: Task[] }</code></td>
+                            <td>phases.ts, DayBlock, PhaseCard</td>
+                        </tr>
+                        <tr>
+                            <td>PhaseConfig</td>
+                            <td><code>{ title, days, icon, color, dim, data: DayData[] }</code></td>
+                            <td>phases.ts, App.tsx, PhaseCard</td>
+                        </tr>
+                        <tr>
+                            <td>NoteSection</td>
+                            <td>Union of 8 shapes: h2 | h3 | p | code | tip | warn | table | keypoints | quiz</td>
+                            <td>notes.ts, NotesPanel renderer</td>
+                        </tr>
+                        <tr>
+                            <td>NoteData</td>
+                            <td><code>{ phase: string; day: string; sections: NoteSection[] }</code></td>
+                            <td>notes.ts, NotesPanel, App.tsx</td>
+                        </tr>
+                        <tr>
+                            <td>NotesMap</td>
+                            <td><code>Record&lt;string, NoteData&gt;</code></td>
+                            <td>notes.ts export, App.tsx lookup</td>
+                        </tr>
+                        <tr>
+                            <td>AppState</td>
+                            <td><code>{ [taskId]: boolean; _streak?: number; _lastDay?: string }</code></td>
+                            <td>useTrackerState, utils, all tests</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note" style="margin-top:16px">
+                <strong>Why strict: true matters:</strong> With <code>"strict": true</code> in tsconfig.json, TypeScript
+                enables strictNullChecks, noImplicitAny, and 6 other checks. If you mistype a prop name, pass the wrong
+                type, or forget to handle null, the build fails before deployment. This catches real bugs automatically.
+            </div>
+
+            <div style="margin-top:20px">
+                <h3 style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">How taskId() uniquely
+                    identifies every task</h3>
+                <pre>// Every task has a unique string key composed of:
+// p = phase index,  d = day index,  t = task index
+
+taskId(0, 0, 0)  → "p0d0t0"  // Phase 1, Day 1, Task 1
+taskId(0, 0, 2)  → "p0d0t2"  // Phase 1, Day 1, Task 3
+taskId(2, 4, 1)  → "p2d4t1"  // Phase 3, Day 5, Task 2
+
+// AppState stores them as:
+{
+  "p0d0t0": true,   // checked
+  "p0d0t2": false,  // unchecked
+  "_streak": 5,
+  "_lastDay": "Mon May 25 2026"
+}</pre>
+            </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="commands">
+            <div class="section-header">
+                <span class="section-num">06</span>
+                <h2>All npm Commands</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>When to Use</th>
+                            <th>What It Does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>npm run dev</td>
+                            <td>Daily development</td>
+                            <td>Starts Vite dev server at <strong>localhost:5173</strong>. Hot module reload — changes
+                                appear instantly without page refresh.</td>
+                        </tr>
+                        <tr>
+                            <td>npm run build</td>
+                            <td>Before deploying</td>
+                            <td>Runs <code>tsc</code> (TypeScript check) then <code>vite build</code>. Outputs optimised
+                                JS + CSS + HTML to <code>dist/</code> folder.</td>
+                        </tr>
+                        <tr>
+                            <td>npm run preview</td>
+                            <td>Test production</td>
+                            <td>Serves the <code>dist/</code> folder locally. Simulates what Vercel will serve. Catches
+                                build-only bugs.</td>
+                        </tr>
+                        <tr>
+                            <td>npm test</td>
+                            <td>CI / after changes</td>
+                            <td>Runs all <strong>56 Vitest tests</strong> once and exits. Zero failures required to
+                                pass.</td>
+                        </tr>
+                        <tr>
+                            <td>npm run test:watch</td>
+                            <td>Active development</td>
+                            <td>Re-runs tests on every file save. Instant feedback loop — see passes/fails as you code.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>npm run test:ui</td>
+                            <td>Debugging tests</td>
+                            <td>Opens Vitest UI in browser — visual test runner with pass/fail details and stack traces.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>npm run typecheck</td>
+                            <td>Quick verification</td>
+                            <td>Runs <code>tsc --noEmit</code> only. Faster than full build. Zero errors = types are
+                                clean.</td>
+                        </tr>
+                        <tr>
+                            <td>npm run lint</td>
+                            <td>Before committing</td>
+                            <td>Same as typecheck + prints "No lint errors". Use before every git commit.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="warn" style="margin-top:16px">
+                <strong>On iPad:</strong> None of these commands work on iPadOS — there is no Node.js runtime. Run them
+                on a computer, or use StackBlitz (cloud browser) which runs them for you automatically.
+            </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="tests">
+            <div class="section-header">
+                <span class="section-num">07</span>
+                <h2>Test Suite — 56 Tests, Zero Failures</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--green)">56</div>
+                    <div class="stat-lbl">Total Tests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--purple)">4</div>
+                    <div class="stat-lbl">Test Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--blue)">0</div>
+                    <div class="stat-lbl">Failures</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:var(--gold)">jsdom</div>
+                    <div class="stat-lbl">Environment</div>
+                </div>
+            </div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Tests</th>
+                            <th>What Is Verified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>utils.test.ts</td>
+                            <td><span class="tag tag-test">20</span></td>
+                            <td>taskId format + uniqueness, countDone (empty/partial/full/metadata), countTotal,
+                                badgeClasses for all 4 kinds, cn() joining and filtering falsy values</td>
+                        </tr>
+                        <tr>
+                            <td>data.test.ts</td>
+                            <td><span class="tag tag-test">14</span></td>
+                            <td>6 phases exist, all fields present, valid task kinds only, 100+ total tasks, hex colors
+                                valid (#xxxxxx format), notes structure: sections array, valid types, keypoints length,
+                                quiz questions count</td>
+                        </tr>
+                        <tr>
+                            <td>useTrackerState.test.ts</td>
+                            <td><span class="tag tag-test">11</span></td>
+                            <td>Empty initial state, toggle ON/OFF, multiple independent toggles, resetAll wipes
+                                everything, localStorage persistence, loading saved state on mount, streak=1 on first
+                                day, streak increments, streak resets on missed day</td>
+                        </tr>
+                        <tr>
+                            <td>components.test.tsx</td>
+                            <td><span class="tag tag-test">11</span></td>
+                            <td>StatsBar shows all 5 labels, correct numeric values, 0% and 100% edge cases. TaskRow
+                                renders text + badge per kind, click fires onToggle, line-through class when done,
+                                multiple clicks work</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note" style="margin-top:16px">
+                <strong>Testing setup:</strong> Vitest runs in <code>jsdom</code> environment (simulates a browser in
+                Node.js). <code>renderHook()</code> tests hooks without a UI. <code>render()</code> +
+                <code>screen.getByText()</code> tests what users actually see. localStorage is mocked with an in-memory
+                store. Dates are mocked with <code>vi.useFakeTimers()</code> for streak logic.
+            </div>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="deploy">
+            <div class="section-header">
+                <span class="section-num">08</span>
+                <h2>Deploying from iPad — Step by Step</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Option A — Vercel (Recommended — Free Forever)</h3>
+                <div class="deploy-steps">
+                    <div class="deploy-step">
+                        <p>Go to <strong>github.com</strong> in Safari. Create a new repository called
+                            <strong>roadmap-tracker</strong>.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Click <strong>"uploading an existing file"</strong> and drag the zip file. GitHub extracts
+                            everything automatically.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Go to <strong>vercel.com</strong>. Sign in with GitHub. Click <strong>"Add New
+                                Project"</strong>.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Select your <strong>roadmap-tracker</strong> repository. Vercel detects Vite automatically.
+                            Click <strong>Deploy</strong>.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>In 60 seconds you get a live URL like <code>roadmap-tracker-gk.vercel.app</code>.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Open the URL in Safari on your iPad. <strong>Your tracker is live ✅</strong> — localStorage
+                            works perfectly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:20px">
+                <h3>Option B — StackBlitz (Run in Browser, No Deploy Needed)</h3>
+                <div class="deploy-steps">
+                    <div class="deploy-step">
+                        <p>Go to <strong>stackblitz.com</strong> in Safari.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Click <strong>"Import from GitHub"</strong> and paste your repo URL.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>StackBlitz runs <code>npm install</code> and <code>npm run dev</code> in the cloud
+                            automatically.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>You see your live app in the browser — and can even edit code right there.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Option C — Working Copy App (Push from iPad)</h3>
+                <div class="deploy-steps">
+                    <div class="deploy-step">
+                        <p>Download <strong>Working Copy</strong> from the App Store (free with paid push unlock ~$20
+                            one-time).</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Connect your GitHub account inside the app settings.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Import your <code>roadmap-tracker</code> folder and commit + push to GitHub.</p>
+                    </div>
+                    <div class="deploy-step">
+                        <p>Vercel auto-deploys on every push — your live URL updates in 60 seconds.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9 -->
+        <section id="concepts">
+            <div class="section-header">
+                <span class="section-num">09</span>
+                <h2>Key Concepts — Plain English</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="font-size:14px;color:var(--sub);margin-bottom:20px">Click any card to see the full explanation.
+            </p>
+
+            <div class="concept-grid">
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">⚡</div>
+                    <h4>What is Vite?</h4>
+                    <div class="q">The build tool that powers npm run dev and npm run build.</div>
+                    <div class="concept-answer">Vite is both a development server and a build tool. In development it
+                        serves your files instantly and hot-reloads changes in milliseconds (changes appear without even
+                        refreshing the page). In build mode it bundles all TypeScript + CSS + React into tiny optimised
+                        files that any server can host. It's much faster than the old Create React App tool — starts in
+                        under 300ms.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">🧪</div>
+                    <h4>What is Vitest?</h4>
+                    <div class="q">The test runner — runs your 56 tests with npm test.</div>
+                    <div class="concept-answer">Vitest is a testing framework built on top of Vite. It runs all your
+                        *.test.ts files, simulates a browser environment using jsdom, and gives you
+                        describe/it/expect/vi as global functions (no import needed). It's compatible with Jest so most
+                        testing tutorials apply. npm test runs all tests once; npm run test:watch re-runs on every file
+                        save for instant feedback.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">🎨</div>
+                    <h4>What is Tailwind CSS?</h4>
+                    <div class="q">Utility-first styling — classes instead of CSS files.</div>
+                    <div class="concept-answer">Instead of writing CSS files, Tailwind gives you utility classes applied
+                        directly in JSX. className="text-[13px] text-emerald-400 border border-emerald-500/20
+                        rounded-lg" is all the styling needed. Tailwind's build step scans your source files and only
+                        generates CSS for classes you actually used — so the final CSS bundle is tiny. Responsive
+                        prefixes (sm: md: lg:) and state variants (hover: focus: dark:) are built in.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">🪝</div>
+                    <h4>What is a Custom Hook?</h4>
+                    <div class="q">A function starting with "use" that encapsulates reusable logic.</div>
+                    <div class="concept-answer">A custom hook is a regular TypeScript function whose name starts with
+                        "use" and which can call other hooks (useState, useEffect) inside it. useTrackerState() extracts
+                        all task state logic from App.tsx into its own testable file. The hook returns exactly what
+                        App.tsx needs (state, toggleTask, resetAll) and hides how localStorage works. This makes the
+                        logic independently testable with renderHook().</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">💾</div>
+                    <h4>What is localStorage?</h4>
+                    <div class="q">Browser storage that survives page refreshes — no server needed.</div>
+                    <div class="concept-answer">localStorage is a key-value store built into every browser. It persists
+                        data across page refreshes, browser restarts, and even device reboots — but only for that
+                        browser on that device. Your tracker uses it to save which tasks are checked, the current streak
+                        count, and the last active day. No server, no database, no account needed. The limitation: if
+                        you open the app in a different browser or device, your progress doesn't carry over.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">🌲</div>
+                    <h4>What is the DOM?</h4>
+                    <div class="q">The live tree structure the browser builds from HTML.</div>
+                    <div class="concept-answer">When a browser reads HTML, it builds a tree of objects in memory called
+                        the Document Object Model. React creates a Virtual DOM — a JavaScript copy of this tree — and
+                        diffs it against the real DOM. When state changes, React only updates the parts that actually
+                        changed instead of rewriting everything. This is why React is fast even with many interactive
+                        elements. JavaScript can read and modify the DOM via document.querySelector() and friends.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">📦</div>
+                    <h4>What is TypeScript strict mode?</h4>
+                    <div class="q">strict: true in tsconfig enables all safety checks.</div>
+                    <div class="concept-answer">strict: true in tsconfig.json enables 7 strict checks at once:
+                        strictNullChecks (can't use a value that might be null), noImplicitAny (can't have untyped
+                        variables), strictFunctionTypes, strictBindCallApply, strictPropertyInitialization,
+                        noImplicitThis, and alwaysStrict. Without it TypeScript is lenient and misses real bugs. With
+                        it, if you mistype a prop name, pass the wrong type, or forget to handle undefined, the build
+                        refuses to compile.</div>
+                </div>
+                <div class="concept-card" onclick="toggleConcept(this)">
+                    <div class="concept-icon">🔄</div>
+                    <h4>What is Hot Module Reload?</h4>
+                    <div class="q">Changes appear in the browser without refreshing the page.</div>
+                    <div class="concept-answer">When you run npm run dev and save a file, Vite detects the change and
+                        sends only the updated module to the browser. The browser swaps it in without losing your
+                        current state — your checked tasks, open panels, and typed search all remain. This makes
+                        development much faster than full page reloads. TypeScript errors also appear inline in the
+                        terminal instantly, so you catch mistakes as you type.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer style="border-top:1px solid var(--border);padding-top:32px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px">
+                ROADMAP TRACKER · REACT 18 + TYPESCRIPT 5 + TAILWIND CSS 3 + VITE 5 · ZERO TO HIRED IN 80 DAYS
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ── Scroll progress ──────────────────────────────────────────────────────────
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = h.scrollTop / (h.scrollHeight - h.clientHeight);
+            document.getElementById('top-strip').style.transform = `scaleX(${pct})`;
+        });
+
+        // ── Active nav link ──────────────────────────────────────────────────────────
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+                    if (active) {
+                        active.classList.add('active');
+                        active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }
+            });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+
+        sections.forEach(s => observer.observe(s));
+
+        // ── Concept card toggle ──────────────────────────────────────────────────────
+        function toggleConcept(card) {
+            const wasOpen = card.classList.contains('open');
+            document.querySelectorAll('.concept-card').forEach(c => c.classList.remove('open'));
+            if (!wasOpen) card.classList.add('open');
+        }
+    </script>
+
+</body>
+
+</html>

@@ -23,6 +23,7 @@ import { SitecoreCMSView } from './views/SitecoreCMSView';
 import { PomodoroModal } from './components/PomodoroModal';
 import { showToast } from './components/Toast';
 import { getApiKey, saveApiKey } from './components/AIService';
+import { BackToTop } from './components/BackToTop';
 
 
 export const App: React.FC = () => {
@@ -252,6 +253,28 @@ export const App: React.FC = () => {
           </button>
         </div>
         <div className="ham-section">
+          <div className="ham-label">🗺️ Roadmap Flow</div>
+          <a
+            className="ham-item"
+            href="roadmap-architecutre.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+          >
+            <span className="ham-ico">🗺️</span>Architecture Flow
+            <span className="ham-badge" style={{ background: 'var(--amber)', color: '#000' }}>view</span>
+          </a>
+          <a
+            className="ham-item"
+            href="Roadmap-Tracker-Architecture.html"
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+          >
+            <span className="ham-ico">🗺️</span>Roadmap Tracker
+            <span className="ham-badge" style={{ background: 'var(--amber)', color: '#000' }}>view</span>
+          </a>
+        </div>
+
+        <div className="ham-section">
           <div className="ham-label">🏗️ CMS Builder</div>
           <button className={`ham-item ${currentView === 'sitecore' ? 'active' : ''}`} onClick={() => handleNavItemClick('sitecore')}>
             <span className="ham-ico">⚡</span>Sitecore Layout
@@ -431,6 +454,8 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+      {/* Floating Back to Top Button */}
+      <BackToTop />
 
     </div>
   );

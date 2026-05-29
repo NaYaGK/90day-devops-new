@@ -4,7 +4,6 @@ import { UseAppStateReturnType } from '../hooks/useAppState';
 import { AIService } from '../components/AIService';
 import { showToast } from '../components/Toast';
 import confetti from 'canvas-confetti';
-import { RoadmapFlow } from '../components/RoadmapFlow';
 
 const XP_MAP = { concept: 10, code: 25, quiz: 20, project: 50 };
 
@@ -50,7 +49,6 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>(''); // 'done' | 'incomplete' | ''
   const [phaseFilter, setPhaseFilter] = useState<string>('all'); // 'all' | '0' | '1' ...
-  const [showFlow, setShowFlow] = useState<boolean>(true);
 
   const doneCount = cntDone();
   const totalCount = cntTotal();
@@ -242,23 +240,6 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
             : `${totalCount - doneCount} tasks to go. Keep the streak alive!`}
         </span>
       </div>
-
-      {/* Visual Flowchart Toggle and Section */}
-      <button 
-        className={`flow-toggle-btn ${showFlow ? 'active' : ''}`}
-        onClick={() => setShowFlow(!showFlow)}
-      >
-        <span>🗺️ Roadmap Architecture Flow</span>
-        <span className="toggle-arrow">{showFlow ? '▼' : '▶'}</span>
-      </button>
-
-      {showFlow && (
-        <RoadmapFlow 
-          appState={appState}
-          phaseFilter={phaseFilter}
-          setPhaseFilter={setPhaseFilter}
-        />
-      )}
 
       {/* Search Input */}
       <div className="search-wrap" style={{ marginBottom: '5px' }}>
