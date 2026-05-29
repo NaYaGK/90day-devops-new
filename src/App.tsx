@@ -19,6 +19,7 @@ import { BuildLogView } from './views/BuildLogView';
 import { LinkedInView } from './views/LinkedInView';
 import { ReadinessView } from './views/ReadinessView';
 import { ReviewsView } from './views/ReviewsView';
+import { SitecoreCMSView } from './views/SitecoreCMSView';
 import { PomodoroModal } from './components/PomodoroModal';
 import { ANTHROPIC_KEY_STORAGE, getApiKey, saveApiKey } from './components/AIService';
 
@@ -124,6 +125,8 @@ export const App: React.FC = () => {
         return <ReadinessView appState={appState} />;
       case 'reviews':
         return <ReviewsView appState={appState} />;
+      case 'sitecore':
+        return <SitecoreCMSView appState={appState} />;
       default:
         return (
           <RoadmapView
@@ -212,6 +215,13 @@ export const App: React.FC = () => {
         aria-label="Navigation menu"
       >
         <div className="ham-section">
+          <div className="ham-label">🏗️ CMS Builder</div>
+          <button className={`ham-item ${currentView === 'sitecore' ? 'active' : ''}`} onClick={() => handleNavItemClick('sitecore')}>
+            <span className="ham-ico">⚡</span>Sitecore Layout
+            <span className="ham-badge" style={{ background: 'var(--blue)', color: '#000' }}>new</span>
+          </button>
+        </div>
+        <div className="ham-section">
           <div className="ham-label">🔥 AI Tools</div>
           <button className={`ham-item ${currentView === 'projects' ? 'active' : ''}`} onClick={() => handleNavItemClick('projects')}>
             <span className="ham-ico">🚀</span>Projects
@@ -276,7 +286,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <main style={{ paddingBottom: '80px' }}>
+      <main style={{ paddingBottom: currentView === 'sitecore' ? '0px' : '80px' }}>
         {renderView()}
       </main>
 
